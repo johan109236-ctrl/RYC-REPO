@@ -1,0 +1,47 @@
+/* ============================================================
+   RYCE — Shared theme tokens
+   Import this ONCE globally (see globals.css) and every
+   component reads from these variables instead of hardcoding
+   colors. When dark mode is added later, it's just a second
+   block here + a `data-theme="dark"` attribute toggle on
+   <html> or <body> — no component CSS needs to change.
+   ============================================================ */
+
+:root {
+  /* Raw brand palette, pulled from the logo */
+  --ryce-cream: #f8f4ec;
+  --ryce-white: #ffffff;
+  --ryce-charcoal: #2b2a26;
+  --ryce-charcoal-soft: #4a463e;
+  --ryce-beige: #b9a37f;
+  --ryce-beige-light: #ded2b8;
+  --ryce-beige-dark: #8c7a5c;
+  --ryce-border: #e7ded0;
+
+  /* Semantic tokens — components use ONLY these */
+  --bg-primary: var(--ryce-cream);
+  --bg-surface: var(--ryce-white);
+  --text-primary: var(--ryce-charcoal);
+  --text-muted: var(--ryce-charcoal-soft);
+  --accent: var(--ryce-beige-dark);
+  --accent-light: var(--ryce-beige-light);
+  --border-color: var(--ryce-border);
+
+  /* Layout constants shared across components */
+  --header-height: 76px;
+  --header-height-mobile: 64px;
+}
+
+/* Ready for later — flip by setting data-theme="dark" on <html>.
+   Left commented so nothing changes until you wire up a toggle. */
+/*
+[data-theme='dark'] {
+  --bg-primary: #171613;
+  --bg-surface: #201f1c;
+  --text-primary: #f3ede1;
+  --text-muted: #c9bfae;
+  --accent: var(--ryce-beige-light);
+  --accent-light: #4a463e;
+  --border-color: #33312b;
+}
+*/

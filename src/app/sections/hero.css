@@ -1,0 +1,428 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Montserrat:wght@400;500;600&display=swap');
+
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+#hero {
+  position: relative;
+  width: 100%;
+
+  /* SHORTER HERO */
+  height: 520px;
+
+  min-height: 0;
+  max-height: none;
+
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+
+/* =====================================================
+   IMAGE SLIDES
+   ===================================================== */
+
+.hero-track {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+
+  /*
+    Keep the image wide but move the framing upward
+    so model heads don't get cropped.
+  */
+  background-position: center 25%;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  opacity: 0;
+  transform: scale(1.03);
+
+  transition:
+    opacity 1s ease,
+    transform 6s ease;
+
+  z-index: 0;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 1;
+}
+
+
+/* =====================================================
+   DARK OVERLAY
+   ===================================================== */
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to top,
+    rgba(43, 42, 38, 0.55) 0%,
+    rgba(43, 42, 38, 0.18) 28%,
+    rgba(43, 42, 38, 0) 55%
+  );
+}
+
+
+/* =====================================================
+   TEXT CONTAINER
+   ===================================================== */
+
+.hero-container {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 3.5rem;
+
+  z-index: 10;
+
+  padding: 0 2rem;
+
+  max-width: 30rem;
+}
+
+
+/* =====================================================
+   EYEBROW
+   ===================================================== */
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 0.6rem;
+
+  margin-bottom: 0.85rem;
+
+  padding: 0.3rem 0.75rem;
+
+  background: var(--bg-surface);
+}
+
+.hero-eyebrow-text {
+  font-family: 'Montserrat', sans-serif;
+
+  font-size: 10px;
+  letter-spacing: 0.3em;
+
+  text-transform: uppercase;
+
+  color: var(--text-primary);
+
+  font-weight: 600;
+}
+
+.hero-line {
+  display: none;
+}
+
+
+/* =====================================================
+   HEADING
+   ===================================================== */
+
+.hero-heading {
+  font-family: 'Cormorant Garamond', serif;
+
+  font-size: clamp(2.25rem, 4.5vw, 3.4rem);
+
+  font-weight: 300;
+
+  color: var(--ryce-white);
+
+  line-height: 1.05;
+
+  margin: 0 0 0.6rem;
+}
+
+.hero-accent {
+  font-style: italic;
+  color: var(--accent-light);
+}
+
+
+/* =====================================================
+   SUBTEXT
+   ===================================================== */
+
+.hero-subtext {
+  font-family: 'Montserrat', sans-serif;
+
+  font-size: 0.85rem;
+
+  font-weight: 400;
+
+  color: rgba(255, 255, 255, 0.85);
+
+  max-width: 24rem;
+
+  margin: 0 0 1.4rem;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   BUTTON
+   ===================================================== */
+
+.hero-btn-primary {
+  display: inline-block;
+
+  padding: 0.85rem 2rem;
+
+  font-family: 'Montserrat', sans-serif;
+
+  font-size: 0.68rem;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+
+  font-weight: 600;
+
+  text-decoration: none;
+
+  background-color: var(--bg-surface);
+
+  color: var(--text-primary);
+
+  border: 1px solid var(--bg-surface);
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.hero-btn-primary:hover {
+  background-color: transparent;
+
+  color: var(--ryce-white);
+
+  border-color: var(--ryce-white);
+}
+
+
+/* =====================================================
+   ARROWS
+   ===================================================== */
+
+.hero-arrow {
+  position: absolute;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  z-index: 20;
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  background: rgba(43, 42, 38, 0.2);
+
+  color: var(--ryce-white);
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.hero-arrow:hover {
+  background-color: var(--bg-surface);
+
+  border-color: var(--bg-surface);
+
+  color: var(--text-primary);
+}
+
+.hero-arrow--prev {
+  left: 1.25rem;
+}
+
+.hero-arrow--next {
+  right: 1.25rem;
+}
+
+
+/* =====================================================
+   DOTS
+   ===================================================== */
+
+.hero-dots {
+  position: absolute;
+
+  bottom: 1.25rem;
+  left: 2rem;
+
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+
+  gap: 0.5rem;
+}
+
+.hero-dot {
+  position: relative;
+
+  width: 24px;
+  height: 2px;
+
+  background: rgba(255, 255, 255, 0.4);
+
+  border: none;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  overflow: hidden;
+}
+
+.hero-dot-fill {
+  position: absolute;
+  inset: 0;
+
+  background: var(--accent-light);
+
+  transform: scaleX(0);
+
+  transform-origin: left;
+}
+
+.hero-dot.is-active .hero-dot-fill {
+  animation: heroDotProgress 6s linear forwards;
+}
+
+@keyframes heroDotProgress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+
+/* =====================================================
+   COUNTER
+   ===================================================== */
+
+.hero-counter {
+  position: absolute;
+
+  bottom: 1.25rem;
+  right: 2rem;
+
+  z-index: 20;
+
+  font-family: 'Montserrat', sans-serif;
+
+  color: rgba(255, 255, 255, 0.8);
+
+  font-size: 0.7rem;
+
+  letter-spacing: 0.1em;
+}
+
+.hero-counter-current {
+  color: var(--ryce-white);
+  font-weight: 600;
+}
+
+.hero-counter-divider {
+  display: none;
+}
+
+.hero-counter-total::before {
+  content: ' / ';
+}
+
+
+/* =====================================================
+   TEXT ANIMATION
+   ===================================================== */
+
+.hero-fade-up {
+  opacity: 0;
+
+  animation: heroFadeUp 0.7s ease forwards;
+}
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  #hero {
+    height: 460px;
+    min-height: 0;
+  }
+
+  .hero-slide {
+    /*
+      A little higher on mobile because
+      portrait-style images crop more aggressively.
+    */
+    background-position: center 20%;
+  }
+
+  .hero-container {
+    bottom: 3.5rem;
+    padding: 0 1.25rem;
+  }
+
+  .hero-arrow {
+    display: none;
+  }
+
+  .hero-dots {
+    left: 1.25rem;
+  }
+
+  .hero-counter {
+    right: 1.25rem;
+  }
+}
