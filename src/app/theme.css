@@ -1,12 +1,3 @@
-/* ============================================================
-   RYCE — Shared theme tokens
-   Import this ONCE globally (see globals.css) and every
-   component reads from these variables instead of hardcoding
-   colors. When dark mode is added later, it's just a second
-   block here + a `data-theme="dark"` attribute toggle on
-   <html> or <body> — no component CSS needs to change.
-   ============================================================ */
-
 :root {
   /* Raw brand palette, pulled from the logo */
   --ryce-cream: #f8f4ec;
@@ -26,6 +17,12 @@
   --accent: var(--ryce-beige-dark);
   --accent-light: var(--ryce-beige-light);
   --border-color: var(--ryce-border);
+
+  /* These two were used throughout ProductPage.tsx / TopBar.tsx but were
+     never defined anywhere, so text using them fell back to invalid/inherited
+     colors. Defining them here fixes that silently-broken styling. */
+  --text-secondary: var(--text-muted);
+  --border-subtle: rgba(43, 42, 38, 0.12);
 
   /* Layout constants shared across components */
   --header-height: 76px;

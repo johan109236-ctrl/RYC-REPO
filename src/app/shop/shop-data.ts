@@ -59,9 +59,16 @@ export const products: Product[] = [
       // '/assets/images/PLEATED4.jpg',
     ],
     colors: [
-      { label: 'Olive', swatch: '#6B6B3A' },
-      { label: 'Black', swatch: '#1A1A1A' },
-      { label: 'Cream', swatch: '#E8E0D0' },
+      {
+        label: 'Black',
+        swatch: '#1A1A1A',
+        images: ['/assets/images/PLEATED1.jpg', '/assets/images/PLEATED2.jpg'],
+      },
+      {
+        label: 'Grey',
+        swatch: '#888884',
+        images: ['/assets/images/PLEATED1.jpg', '/assets/images/PLEATED2.jpg'],
+      },
     ],
     description: 'Relaxed pleated pants designed for everyday wear. A wide silhouette with a clean drape.',
     details:     '100% Cotton. Relaxed fit. Elasticated waistband with drawstring. Two side pockets.',
@@ -90,8 +97,16 @@ export const products: Product[] = [
       '/assets/images/2ND.jpeg',
     ],
     colors: [
-      { label: 'Black', swatch: '#1A1A1A' },
-      { label: 'Grey',  swatch: '#888884' },
+      {
+        label: 'Black',
+        swatch: '#1A1A1A',
+        images: ['/assets/images/1ST.jpeg', '/assets/images/2ND.jpeg'],
+      },
+      {
+        label: 'Grey',
+        swatch: '#888884',
+        images: ['/assets/images/1ST.jpeg', '/assets/images/2ND.jpeg'],
+      },
     ],
     description: 'A relaxed everyday pant with a wide dropped silhouette.',
     details:     '100% Cotton. Dropped crotch. Side pockets. Elasticated waist.',

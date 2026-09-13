@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import './productCard.css';
+import { useCart } from '../context/CartContext';
 
 export type Product = {
   id: string;
+  slug?: string;
   name: string;
   price: string;
   image: string;
@@ -13,6 +15,7 @@ export type Product = {
   href: string;
   tag?: string;
   sizes: string[];
+  colors?: { label: string; swatch: string }[];
 };
 
 type ProductCardProps = {
@@ -28,8 +31,10 @@ export default function ProductCard({
   onQuickView,
   onToggleWishlist,
 }: ProductCardProps) {
+  const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
 
   const handleWishlist = () => {
     setIsWishlisted((prev) => !prev);
@@ -38,6 +43,19 @@ export default function ProductCard({
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
+    // Card view has no colour picker, so default to the product's first
+    // colour (if it has one) — the shopper can change it on the product page.
+    addItem({
+      id: product.id,
+      slug: product.slug ?? product.href.replace('/shop/', ''),
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      size: selectedSize,
+      color: product.colors?.[0]?.label,
+    });
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 1500);
     onAddToCart?.(product, selectedSize);
   };
 
@@ -94,7 +112,7 @@ export default function ProductCard({
           onClick={handleAddToCart}
           disabled={!selectedSize}
         >
-          {selectedSize ? 'Add to Cart' : 'Select a Size'}
+          {justAdded ? 'Added ✓' : selectedSize ? 'Add to Cart' : 'Select a Size'}
         </button>
       </div>
     </div>

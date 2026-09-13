@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import './topBar.css';
+import SearchOverlay from './SearchOverlay';
+import { useCart } from '../context/CartContext';
 
 const leftLinks = [
   { label: 'Shop', href: '/shop' },
@@ -14,6 +16,8 @@ const rightLinks: { label: string; href: string }[] = [];
 export default function Topbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { totalCount } = useCart();
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12);
@@ -81,13 +85,10 @@ export default function Topbar() {
           type="button"
           className="header-icon-btn"
           aria-label="Search"
+          onClick={() => setIsSearchOpen(true)}
         >
           <i className="bi bi-search" />
         </button>
-
-       
-
-       
 
         <Link
           href="/cart"
@@ -95,7 +96,7 @@ export default function Topbar() {
           aria-label="Cart"
         >
           <i className="bi bi-bag" />
-          <span className="header-cart-count">0</span>
+          <span className="header-cart-count">{totalCount}</span>
         </Link>
       </div>
     </div>
@@ -119,6 +120,9 @@ export default function Topbar() {
 
       {isMenuOpen && (
         <div className="header-drawer-backdrop" onClick={() => setIsMenuOpen(false)} />
-      )}</header>
+      )}
+
+      <SearchOverlay open={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    </header>
   );
 }

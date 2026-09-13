@@ -1,0 +1,217 @@
+.cart-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 6rem;
+}
+
+.cart-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  font-weight: 300;
+  color: var(--text-primary);
+  margin: 0 0 2rem;
+}
+
+.cart-empty {
+  padding: 4rem 0;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text-secondary);
+}
+
+.cart-continue-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--text-primary);
+  padding-bottom: 2px;
+}
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: 65fr 35fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 1.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle, rgba(43, 42, 38, 0.12));
+}
+
+.cart-item-image {
+  width: 90px;
+  height: 115px;
+  object-fit: cover;
+  object-position: center top;
+  background: var(--bg-primary);
+}
+
+.cart-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cart-item-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.cart-item-meta {
+  display: flex;
+  gap: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.cart-item-price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.cart-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.cart-qty-stepper {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-subtle, rgba(43, 42, 38, 0.2));
+}
+
+.cart-qty-stepper button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.cart-qty-stepper span {
+  min-width: 24px;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+}
+
+.cart-remove-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-decoration: underline;
+  color: var(--text-secondary);
+}
+
+.cart-remove-btn:hover {
+  color: var(--text-primary);
+}
+
+.cart-item-line-total {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.cart-summary {
+  position: sticky;
+  top: 5rem;
+  border: 1px solid var(--border-subtle, rgba(43, 42, 38, 0.12));
+  padding: 1.75rem;
+}
+
+.cart-summary-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 1.25rem;
+  color: var(--text-primary);
+}
+
+.cart-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.cart-summary-note {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.cart-summary-divider {
+  border: none;
+  border-top: 1px solid var(--border-subtle, rgba(43, 42, 38, 0.12));
+  margin: 1rem 0;
+}
+
+.cart-summary-total {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.cart-checkout-btn {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1.25rem;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.cart-checkout-btn:hover {
+  opacity: 0.9;
+}
+
+.cart-summary .cart-continue-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .cart-layout { grid-template-columns: 1fr; }
+  .cart-summary { position: static; }
+}

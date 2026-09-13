@@ -1,17 +1,40 @@
 'use client';
 
 import { useState } from 'react';
+import { useCart } from '../context/CartContext';
 
 export default function ProductPage({ data }: { data: any }) {
+  const { addItem } = useCart();
+
   const [currentImg, setCurrentImg]       = useState(0);
   const [selectedSize, setSelectedSize]   = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+  const [justAdded, setJustAdded]         = useState(false);
+
+  const hasColors = data.colors?.length > 0;
 
   const activeImages =
     data.colors?.find((c: any) => c.label === selectedColor)?.images ??
     data.images ??
     [];
+
+  const canAddToCart = Boolean(selectedSize) && (!hasColors || Boolean(selectedColor));
+
+  const handleAddToCart = () => {
+    if (!canAddToCart || !selectedSize) return;
+    addItem({
+      id: data.id,
+      slug: data.slug,
+      name: data.name,
+      price: data.price,
+      image: activeImages[0] ?? data.image,
+      size: selectedSize,
+      color: selectedColor ?? undefined,
+    });
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 1800);
+  };
 
   const total = activeImages.length;
   const prev  = () => setCurrentImg((i) => (i - 1 + total) % total);
@@ -495,8 +518,18 @@ export default function ProductPage({ data }: { data: any }) {
             </div>
 
             {/* ADD TO CART */}
-            <button className="pp-add-btn" disabled={!selectedSize}>
-              {selectedSize ? 'Add to Cart' : 'Select a Size'}
+            <button
+              className="pp-add-btn"
+              disabled={!canAddToCart}
+              onClick={handleAddToCart}
+            >
+              {justAdded
+                ? 'Added ✓'
+                : !selectedSize
+                ? 'Select a Size'
+                : hasColors && !selectedColor
+                ? 'Select a Colour'
+                : 'Add to Cart'}
             </button>
 
             {/* DESCRIPTION */}
