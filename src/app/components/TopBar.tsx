@@ -6,8 +6,7 @@ import { useEffect, useState } from 'react';
 import './topBar.css';
 
 const leftLinks = [
-  { label: 'Shop', href: '/collections/all' },
-  { label: 'New Arrivals', href: '/collections/new-arrivals' },
+  { label: 'Shop', href: '/shop' },
 ];
 
 const rightLinks: { label: string; href: string }[] = [];
@@ -103,7 +102,23 @@ export default function Topbar() {
 
   </div>
 
-  {/* drawer stays exactly as you have it */}
-</header>
+      <div className={`header-drawer ${isMenuOpen ? 'is-open' : ''}`}>
+        <nav className="header-drawer-nav">
+          {[...leftLinks, ...rightLinks].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="header-drawer-link"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      {isMenuOpen && (
+        <div className="header-drawer-backdrop" onClick={() => setIsMenuOpen(false)} />
+      )}</header>
   );
 }
