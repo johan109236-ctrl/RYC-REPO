@@ -10,49 +10,26 @@ type Slide = {
   headingAccent?: string;
   subtext: string;
   ctaText: string;
-  ctaHref: string;
 };
 
 const slides: Slide[] = [
   {
     image: '/assets/images/1ST.jpeg',
-    eyebrow: 'The SS’26 Edit',
-    heading: 'Simple by',
-    headingAccent: 'Nature',
+    eyebrow: 'Coming Soon',
+    heading: 'Something\u2019s',
+    headingAccent: 'Coming',
     subtext:
-      'Considered pieces cut from natural fibers, made to move quietly with you through the day.',
-    ctaText: 'Shop New Arrivals',
-    ctaHref: '/collections/new-arrivals',
-  },
-  {
-    image: '/assets/images/1ST.jpeg',
-    eyebrow: 'Core Essentials',
-    heading: 'Refined by',
-    headingAccent: 'Design',
-    subtext:
-      'Clean silhouettes and a restrained palette — clothing built around what you actually wear.',
-    ctaText: 'Shop Essentials',
-    ctaHref: '/collections/essentials',
+      'RYCE is just getting started. The first collection is being finished right now — quietly, carefully, without rushing it.',
+    ctaText: 'Get Notified',
   },
   {
     image: '/assets/images/2ND.jpeg',
-    eyebrow: 'Now Restocked',
-    heading: 'Everyday',
-    headingAccent: 'Staples',
+    eyebrow: 'In the Works',
+    heading: 'Simple by',
+    headingAccent: 'Nature',
     subtext:
-      'The pieces you keep reaching for, back in stock — in every size, in every neutral.',
-    ctaText: 'View Restocks',
-    ctaHref: '/collections/restocked',
-  },
-  {
-    image: '/assets/images/ryce-hero-4.jpg',
-    eyebrow: 'The Lookbook',
-    heading: 'Wear it',
-    headingAccent: 'Your Way',
-    subtext:
-      'A closer look at how the collection comes together, styled from studio to street.',
-    ctaText: 'Explore the Lookbook',
-    ctaHref: '/pages/lookbook',
+      'Natural fibers, restrained design, nothing rushed. Follow along to be the first to know when it drops.',
+    ctaText: 'Follow Along',
   },
 ];
 
@@ -119,9 +96,9 @@ export default function Hero() {
         </p>
 
         <div className="hero-fade-up" style={{ animationDelay: '0.7s' }}>
-          <a href={slides[active].ctaHref} className="hero-btn-primary">
+          <span className="hero-btn-primary hero-btn-primary--disabled">
             {slides[active].ctaText}
-          </a>
+          </span>
         </div>
       </div>
 

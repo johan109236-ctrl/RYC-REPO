@@ -1,0 +1,54 @@
+/* ============================================================
+   RYCE — Shop page
+   ============================================================ */
+
+.shop-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3.5rem 2rem 5rem;
+}
+
+.shop-header {
+  text-align: center;
+  margin-bottom: 2.75rem;
+}
+
+.shop-eyebrow {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.shop-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .shop-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem 1.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .shop-page { padding: 2.5rem 1.25rem 3.5rem; }
+  .shop-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 0.9rem;
+  }
+}
