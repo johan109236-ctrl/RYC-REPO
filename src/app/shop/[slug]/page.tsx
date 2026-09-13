@@ -2,7 +2,6 @@
 
 import { use } from 'react';
 import { notFound } from 'next/navigation';
-
 import ProductPage from '../ProductPage';
 import { products } from '../shop-data';
 
@@ -13,13 +12,13 @@ export default function Page({
 }) {
   const { slug } = use(params);
 
-  const data = products.find(
-    (product) => product.slug === slug
+  const product = products.find(
+    (product) => product.href === `/shop/${slug}`
   );
 
-  if (!data) {
+  if (!product) {
     notFound();
   }
 
-  return <ProductPage data={data} />;
+  return <ProductPage data={product} />;
 }
