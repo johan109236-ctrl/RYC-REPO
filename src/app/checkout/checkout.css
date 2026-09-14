@@ -1,0 +1,192 @@
+.checkout-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 6rem;
+}
+
+.checkout-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  font-weight: 300;
+  color: var(--text-primary);
+  margin: 0 0 2rem;
+}
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 55fr 45fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.checkout-section-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0 0 1.25rem;
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.checkout-field input,
+.checkout-field textarea {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border-subtle, rgba(43, 42, 38, 0.2));
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.checkout-field input:focus,
+.checkout-field textarea:focus {
+  border-color: var(--text-primary);
+}
+
+.checkout-submit-btn {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: 1px solid var(--text-primary);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.checkout-submit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.checkout-summary {
+  border: 1px solid var(--border-subtle, rgba(43, 42, 38, 0.12));
+  padding: 1.75rem;
+  position: sticky;
+  top: 5rem;
+}
+
+.checkout-line {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.checkout-line-image {
+  width: 48px;
+  height: 60px;
+  object-fit: cover;
+  object-position: center top;
+  background: var(--bg-primary);
+}
+
+.checkout-line-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.checkout-line-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+}
+
+.checkout-line-meta {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+.checkout-line-price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.checkout-divider {
+  border: none;
+  border-top: 1px solid var(--border-subtle, rgba(43, 42, 38, 0.12));
+  margin: 0.75rem 0;
+}
+
+.checkout-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.checkout-total-note {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.checkout-total-grand {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.checkout-confirmation {
+  text-align: center;
+  padding: 5rem 1rem;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text-primary);
+}
+
+.checkout-confirmation h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  margin-bottom: 1rem;
+}
+
+.checkout-confirmation p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.checkout-continue-link {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--text-primary);
+  padding-bottom: 2px;
+}
+
+@media (max-width: 768px) {
+  .checkout-layout { grid-template-columns: 1fr; }
+  .checkout-summary { position: static; }
+}
