@@ -32,6 +32,7 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'ryce-cart';
+export const MAX_QTY_PER_LINE = 3;
 
 // Price strings look like "NRS 1500" — pull the number out for totals.
 function parsePrice(price: string): number {
@@ -74,10 +75,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const existing = prev.find((line) => sameLine(line, item));
       if (existing) {
         return prev.map((line) =>
-          sameLine(line, item) ? { ...line, qty: line.qty + qty } : line
+          sameLine(line, item)
+            ? { ...line, qty: Math.min(line.qty + qty, MAX_QTY_PER_LINE) }
+            : line
         );
       }
-      return [...prev, { ...item, qty }];
+      return [...prev, { ...item, qty: Math.min(qty, MAX_QTY_PER_LINE) }];
     });
   };
 
@@ -90,7 +93,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       qty <= 0
         ? prev.filter((line) => !sameLine(line, { id, size, color }))
         : prev.map((line) =>
-            sameLine(line, { id, size, color }) ? { ...line, qty } : line
+            sameLine(line, { id, size, color })
+              ? { ...line, qty: Math.min(qty, MAX_QTY_PER_LINE) }
+              : line
           )
     );
   };

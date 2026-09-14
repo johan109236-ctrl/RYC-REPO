@@ -33,11 +33,36 @@ export default function CheckoutPage() {
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-    // NOTE: there is no payment gateway or backend order storage wired up
-    // yet. This confirms the order in the UI and clears the cart, but for a
-    // real store you'll need to send this to a backend / payment provider
-    // (e.g. eSewa, Khalti, Stripe) before trusting it as a placed order.
+    // NOTE: there is no payment gateway wired up yet. This confirms the
+    // order in the UI, notifies you on WhatsApp, and clears the cart - but
+    // for a real store you'll still need a payment provider (e.g. eSewa,
+    // Khalti, Stripe) before trusting this as a paid, placed order.
     setPlacing(true);
+
+    fetch('/api/notify-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fullName: form.fullName,
+        phone: form.phone,
+        address: form.address,
+        city: form.city,
+        notes: form.notes,
+        items: items.map((i) => ({
+          name: i.name,
+          size: i.size,
+          color: i.color,
+          qty: i.qty,
+          price: i.price,
+        })),
+        total: subtotal,
+      }),
+    }).catch((err) => {
+      // Don't block the order confirmation on a notification failure -
+      // just log it so it's visible while debugging.
+      console.error('Order placed, but WhatsApp notification failed:', err);
+    });
+
     window.setTimeout(() => {
       setPlacing(false);
       setPlaced(true);
