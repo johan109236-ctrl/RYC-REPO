@@ -5,9 +5,7 @@ export default function TermsPage() {
         Terms &amp; Conditions
       </h1>
       <p className="font-[Montserrat,sans-serif] text-sm leading-7 text-[var(--text-secondary)]">
-        This page is a placeholder. Replace this with your actual terms of
-        service before launch — covering things like order acceptance,
-        pricing, returns/exchanges, and liability.
+        
       </p>
     </main>
   );

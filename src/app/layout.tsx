@@ -29,10 +29,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={playfairDisplay.variable}>
-          <CartProvider>
+            <body className={`${playfairDisplay.variable} min-h-screen flex flex-col`}>
+        <CartProvider>
           <TopBar />
-          {children}
+          <div className="flex-1">
+            {children}
+          </div>
           <Footer />
         </CartProvider>
         <Script

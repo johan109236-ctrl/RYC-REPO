@@ -14,7 +14,7 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    image: '/assets/images/1ST.jpeg',
+    image: '/assets/images/HOME.jpg',
     eyebrow: 'Coming Soon',
     heading: 'Something\u2019s',
     headingAccent: 'Coming',

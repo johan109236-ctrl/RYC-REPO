@@ -11,10 +11,10 @@ export default function Footer() {
         </span>
 
         <div className="flex items-center gap-5">
-          <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="RYCE on Instagram" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-lg">
+          <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="RYCE on Instagram" className="!text-[var(--text-secondary)] hover:!text-[var(--text-primary)] !no-underline transition-colors text-lg">
             <i className="bi bi-instagram" />
           </a>
-          <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="RYCE on TikTok" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-lg">
+          <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="RYCE on TikTok" className="!text-[var(--text-secondary)] hover:!text-[var(--text-primary)] !no-underline transition-colors text-lg">
             <i className="bi bi-tiktok" />
           </a>
         </div>
@@ -25,10 +25,10 @@ export default function Footer() {
           </span>
 
           <div className="flex items-center gap-5">
-            <Link href="/terms" className="font-[Montserrat,sans-serif] text-[0.68rem] tracking-[0.1em] uppercase text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors no-underline">
+            <Link href="/terms" className="font-[Montserrat,sans-serif] text-[0.68rem] tracking-[0.1em] uppercase !text-[var(--text-secondary)] hover:!text-[var(--text-primary)] transition-colors !no-underline">
               Terms
             </Link>
-            <Link href="/privacy" className="font-[Montserrat,sans-serif] text-[0.68rem] tracking-[0.1em] uppercase text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors no-underline">
+            <Link href="/privacy" className="font-[Montserrat,sans-serif] text-[0.68rem] tracking-[0.1em] uppercase !text-[var(--text-secondary)] hover:!text-[var(--text-primary)] transition-colors !no-underline">
               Privacy Policy
             </Link>
           </div>
