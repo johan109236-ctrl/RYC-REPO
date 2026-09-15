@@ -19,6 +19,15 @@ export default function Footer() {
           </a>
         </div>
 
+        <div className="flex items-center gap-5">
+          <Link href="/subscribe" className="font-[Montserrat,sans-serif] text-[0.68rem] tracking-[0.1em] uppercase !text-[var(--text-secondary)] hover:!text-[var(--text-primary)] transition-colors !no-underline">
+            Subscribe
+          </Link>
+          <Link href="/contact" className="font-[Montserrat,sans-serif] text-[0.68rem] tracking-[0.1em] uppercase !text-[var(--text-secondary)] hover:!text-[var(--text-primary)] transition-colors !no-underline">
+            Contact Us
+          </Link>
+        </div>
+
         <div className="w-full border-t border-[var(--border-subtle,rgba(43,42,38,0.12))] pt-6 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
           <span className="font-[Montserrat,sans-serif] text-[0.68rem] tracking-[0.05em] text-[var(--text-secondary)]">
             © {YEAR} RYCE. All rights reserved.

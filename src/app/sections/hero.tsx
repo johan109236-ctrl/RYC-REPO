@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './hero.css';
 
@@ -10,6 +11,7 @@ type Slide = {
   headingAccent?: string;
   subtext: string;
   ctaText: string;
+  href: string;
 };
 
 const slides: Slide[] = [
@@ -21,6 +23,7 @@ const slides: Slide[] = [
     subtext:
       'RYCE is just getting started. The first collection is being finished right now — quietly, carefully, without rushing it.',
     ctaText: 'Get Notified',
+    href: '/shop/pleated-pants',
   },
   {
     image: '/assets/images/2ND.jpeg',
@@ -30,6 +33,7 @@ const slides: Slide[] = [
     subtext:
       'Natural fibers, restrained design, nothing rushed. Follow along to be the first to know when it drops.',
     ctaText: 'Follow Along',
+    href: '/subscribe',
   },
 ];
 
@@ -96,9 +100,9 @@ export default function Hero() {
         </p>
 
         <div className="hero-fade-up" style={{ animationDelay: '0.7s' }}>
-          <span className="hero-btn-primary hero-btn-primary--disabled">
+          <Link href={slides[active].href} className="hero-btn-primary">
             {slides[active].ctaText}
-          </span>
+          </Link>
         </div>
       </div>
 
