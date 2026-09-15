@@ -13,6 +13,13 @@
   background: var(--bg-primary);
 }
 
+.product-card-tag--soon {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+.product-card-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.product-card-size:disabled { opacity: 0.4; cursor: not-allowed; }
+
 .product-card-image-link {
   position: absolute;
   inset: 0;

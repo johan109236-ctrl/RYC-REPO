@@ -21,6 +21,9 @@ export type Product = {
   href: string;        // constructed from slug — keep for ProductCard
   tag: string;
   sizes: string[];
+  comingSoon?: boolean;
+
+  // ── Slug page fields
 
   // ── Slug page fields (product detail) ───────────────────
   slug: string;
@@ -86,8 +89,9 @@ export const products: Product[] = [
     image:      '/assets/images/1ST.jpeg',
     hoverImage: '/assets/images/2ND.jpeg',
     href:       '/shop/the-drop-pant',
-    tag:        'Available Now',
+    tag:        'Coming Soon',
     sizes:      ['S', 'M', 'L', 'XL'],
+    comingSoon: true,
 
     // detail page
     slug:     'the-drop-pant',
@@ -124,8 +128,9 @@ export const products: Product[] = [
     image:      '/assets/images/1ST.jpeg',
     hoverImage: '/assets/images/2ND.jpeg',
     href:       '/shop/quarter-zips',
-    tag:        'Available Now',
+    tag:        'Coming Soon',
     sizes:      ['S', 'M', 'L', 'XL'],
+    comingSoon: true,
 
     // detail page
     slug:     'quarter-zips',
@@ -154,8 +159,9 @@ export const products: Product[] = [
     image:      '/assets/images/1ST.jpeg',
     hoverImage: '/assets/images/2ND.jpeg',
     href:       '/shop/premium-girls-trench-coat',
-    tag:        'Available Now',
+    tag:        'Coming Soon',
     sizes:      ['S', 'M', 'L', 'XL'],
+    comingSoon: true,
 
     // detail page
     slug:     'premium-girls-trench-coat',

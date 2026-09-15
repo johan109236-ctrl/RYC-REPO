@@ -11,28 +11,36 @@ export default function ProductPage({ data }: { data: any }) {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
   const [justAdded, setJustAdded]         = useState(false);
+  const [qty, setQty]                     = useState(1);
+
+  const MAX_QTY_PER_ORDER = 3;
 
   const hasColors = data.colors?.length > 0;
+  const isComingSoon = Boolean(data.comingSoon);
 
   const activeImages =
     data.colors?.find((c: any) => c.label === selectedColor)?.images ??
     data.images ??
     [];
 
-  const canAddToCart = Boolean(selectedSize) && (!hasColors || Boolean(selectedColor));
+    const canAddToCart = !isComingSoon && Boolean(selectedSize) && (!hasColors || Boolean(selectedColor));
 
   const handleAddToCart = () => {
     if (!canAddToCart || !selectedSize) return;
-    addItem({
-      id: data.id,
-      slug: data.slug,
-      name: data.name,
-      price: data.price,
-      image: activeImages[0] ?? data.image,
-      size: selectedSize,
-      color: selectedColor ?? undefined,
-    });
+    addItem(
+      {
+        id: data.id,
+        slug: data.slug,
+        name: data.name,
+        price: data.price,
+        image: activeImages[0] ?? data.image,
+        size: selectedSize,
+        color: selectedColor ?? undefined,
+      },
+      qty
+    );
     setJustAdded(true);
+    setQty(1);
     window.setTimeout(() => setJustAdded(false), 1800);
   };
 
@@ -334,6 +342,55 @@ export default function ProductPage({ data }: { data: any }) {
           color: var(--bg-primary);
         }
 
+        /* ── QTY STEPPER ──────────────────────────────────── */
+        .pp-qty-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+        }
+        .pp-qty-label {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 0.68rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--text-secondary);
+        }
+        .pp-qty-stepper {
+          display: flex;
+          align-items: center;
+          border: 1px solid var(--border-subtle, rgba(43,42,38,0.2));
+        }
+        .pp-qty-stepper button {
+          width: 34px;
+          height: 34px;
+          border: none;
+          background: transparent;
+          font-size: 1rem;
+          color: var(--text-primary);
+          cursor: pointer;
+        }
+        .pp-qty-stepper button:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+        .pp-qty-stepper span {
+          min-width: 32px;
+          text-align: center;
+          font-family: 'Montserrat', sans-serif;
+          font-size: 0.85rem;
+        }
+        .pp-qty-max-note {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 0.65rem;
+          color: var(--text-secondary);
+        }
+
+        .pp-coming-soon-note { font-weight: 600; color: var(--text-primary); }
+.pp-color-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pp-color-btn:disabled:hover { transform: none; }
+.pp-size-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
         /* ── DESCRIPTION ──────────────────────────────────── */
         .pp-desc {
           margin-top: 1.75rem;
@@ -473,8 +530,12 @@ export default function ProductPage({ data }: { data: any }) {
 
             <span className="pp-tag">{data.category}</span>
             <h1 className="pp-name">{data.name}</h1>
-            <div className="pp-price">{data.price}</div>
-            <div className="pp-price-note">Inclusive of all taxes</div>
+                        <div className="pp-price">{data.price}</div>
+            {isComingSoon ? (
+              <div className="pp-price-note pp-coming-soon-note">Not available for order yet — check back soon.</div>
+            ) : (
+              <div className="pp-price-note">Inclusive of all taxes</div>
+            )}
 
             <hr className="pp-divider" />
 
@@ -493,8 +554,9 @@ export default function ProductPage({ data }: { data: any }) {
                       title={color.label}
                       onClick={() => {
                         setSelectedColor(color.label);
-                        setCurrentImg(0); // reset to first image when color changes
+                                                setCurrentImg(0); // reset to first image when color changes
                       }}
+                      disabled={isComingSoon}
                     />
                   ))}
                 </div>
@@ -509,27 +571,41 @@ export default function ProductPage({ data }: { data: any }) {
               {data.sizes?.map((size: string) => (
                 <button
                   key={size}
-                  className={`pp-size-btn ${selectedSize === size ? 'is-selected' : ''}`}
+                                    className={`pp-size-btn ${selectedSize === size ? 'is-selected' : ''}`}
                   onClick={() => setSelectedSize(size)}
+                  disabled={isComingSoon}
                 >
                   {size}
                 </button>
               ))}
             </div>
 
+            {/* QTY */}
+            {!isComingSoon && (
+              <>
+                <div className="pp-qty-row">
+                  <span className="pp-qty-label">Quantity</span>
+                  <div className="pp-qty-stepper">
+                    <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="Decrease quantity">−</button>
+                    <span>{qty}</span>
+                    <button type="button" onClick={() => setQty((q) => Math.min(MAX_QTY_PER_ORDER, q + 1))} disabled={qty >= MAX_QTY_PER_ORDER} aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+                {qty >= MAX_QTY_PER_ORDER && <p className="pp-qty-max-note">Limit of {MAX_QTY_PER_ORDER} per order.</p>}
+              </>
+            )}
+
             {/* ADD TO CART */}
-            <button
-              className="pp-add-btn"
-              disabled={!canAddToCart}
-              onClick={handleAddToCart}
-            >
-              {justAdded
+            <button className="pp-add-btn" disabled={!canAddToCart} onClick={handleAddToCart}>
+              {isComingSoon
+                ? 'Coming Soon'
+                : justAdded
                 ? 'Added ✓'
                 : !selectedSize
                 ? 'Select a Size'
                 : hasColors && !selectedColor
                 ? 'Select a Colour'
-                : 'Add to Cart'}
+                : `Add ${qty} to Cart`}
             </button>
 
             {/* DESCRIPTION */}

@@ -1,0 +1,52 @@
+#shop-preview {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4.5rem 2rem 5.5rem;
+}
+.shop-preview-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+}
+.shop-preview-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.shop-preview-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  color: var(--text-primary);
+  margin: 0;
+}
+.shop-preview-view-all {
+  margin-top: 0.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--text-primary);
+  padding-bottom: 2px;
+}
+.shop-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem 1.5rem;
+}
+@media (max-width: 1024px) {
+  .shop-preview-grid { grid-template-columns: repeat(3, 1fr); gap: 1.75rem 1.25rem; }
+}
+@media (max-width: 640px) {
+  #shop-preview { padding: 3rem 1.25rem 3.5rem; }
+  .shop-preview-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem 0.9rem; }
+}

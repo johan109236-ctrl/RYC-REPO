@@ -6,7 +6,8 @@ import Script from "next/script";
 import type { Metadata } from "next";
 import { Playfair_Display } from "next/font/google";
 import "./globals.css";
-import TopBar from "./components/TopBar"; // 👈 add this
+import TopBar from "./components/TopBar"; 
+import Footer from "./components/Footer";
 import { CartProvider } from "./context/CartContext";
 
 const playfairDisplay = Playfair_Display({
@@ -29,9 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={playfairDisplay.variable}>
-        <CartProvider>
+          <CartProvider>
           <TopBar />
           {children}
+          <Footer />
         </CartProvider>
         <Script
   src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"

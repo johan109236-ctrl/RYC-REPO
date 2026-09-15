@@ -16,6 +16,7 @@ export type Product = {
   tag?: string;
   sizes: string[];
   colors?: { label: string; swatch: string }[];
+  comingSoon?: boolean;
 };
 
 type ProductCardProps = {
@@ -42,7 +43,7 @@ export default function ProductCard({
   };
 
   const handleAddToCart = () => {
-    if (!selectedSize) return;
+    if (product.comingSoon || !selectedSize) return;
     // Card view has no colour picker, so default to the product's first
     // colour (if it has one) — the shopper can change it on the product page.
     addItem({
@@ -67,7 +68,11 @@ export default function ProductCard({
           <img src={product.hoverImage} alt="" className="product-card-image product-card-image--hover" />
         </Link>
 
-        {product.tag && <span className="product-card-tag">{product.tag}</span>}
+                {product.tag && (
+          <span className={`product-card-tag ${product.comingSoon ? 'product-card-tag--soon' : ''}`}>
+            {product.tag}
+          </span>
+        )}
 
         <button
           type="button"
@@ -98,8 +103,9 @@ export default function ProductCard({
             <button
               key={size}
               type="button"
-              className={`product-card-size ${selectedSize === size ? 'is-selected' : ''}`}
+                           className={`product-card-size ${selectedSize === size ? 'is-selected' : ''}`}
               onClick={() => setSelectedSize(size)}
+              disabled={product.comingSoon}
             >
               {size}
             </button>
@@ -110,9 +116,9 @@ export default function ProductCard({
           type="button"
           className="product-card-add-btn"
           onClick={handleAddToCart}
-          disabled={!selectedSize}
+          disabled={product.comingSoon || !selectedSize}
         >
-          {justAdded ? 'Added ✓' : selectedSize ? 'Add to Cart' : 'Select a Size'}
+          {product.comingSoon ? 'Coming Soon' : justAdded ? 'Added ✓' : selectedSize ? 'Add to Cart' : 'Select a Size'}
         </button>
       </div>
     </div>
