@@ -21,17 +21,17 @@ const slides: Slide[] = [
     heading: 'Our',
     headingAccent: 'Premium Pleated Pants',
     subtext:
-      'RYCE IS JUST GETTING STARTED SHOP OUR FIRST DROP.',
+      'RYCE IS JUST GETTING STARTED. DISCOVER OUR FIRST DROP.',
     ctaText: 'PURCHASE',
     href: '/shop/pleated-pants',
   },
   {
-    image: '/assets/images/CLASP-JACKET.jpeg',
+    image: '/assets/images/CLASPHOME.jpeg',
     eyebrow: 'In the Works',
     heading: 'Simple by',
     headingAccent: 'Nature',
     subtext:
-      'Natural fibers, restrained design, nothing rushed. Follow along to be the first to know when it drops.',
+      'A relaxed everyday jacket built for comfort and easy layering. Clean lines, understated details, and  made to be worn often.',
     ctaText: 'Follow Along',
     href: '/subscribe',
   },
