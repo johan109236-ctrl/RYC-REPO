@@ -11,10 +11,10 @@ export default function Footer() {
         </span>
 
         <div className="flex items-center gap-5">
-          <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="RYCE on Instagram" className="!text-[var(--text-secondary)] hover:!text-[var(--text-primary)] !no-underline transition-colors text-lg">
+          <a href="https://www.instagram.com/ryce.np/" target="_blank" rel="noopener noreferrer" aria-label="RYCE on Instagram" className="!text-[var(--text-secondary)] hover:!text-[var(--text-primary)] !no-underline transition-colors text-lg">
             <i className="bi bi-instagram" />
           </a>
-          <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="RYCE on TikTok" className="!text-[var(--text-secondary)] hover:!text-[var(--text-primary)] !no-underline transition-colors text-lg">
+          <a href="https://www.tiktok.com/@ryce.np?_r=1&_t=ZS-99pLf3VqN8B" target="_blank" rel="noopener noreferrer" aria-label="RYCE on TikTok" className="!text-[var(--text-secondary)] hover:!text-[var(--text-primary)] !no-underline transition-colors text-lg">
             <i className="bi bi-tiktok" />
           </a>
         </div>

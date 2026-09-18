@@ -17,16 +17,16 @@ type Slide = {
 const slides: Slide[] = [
   {
     image: '/assets/images/HOME.jpg',
-    eyebrow: 'Coming Soon',
-    heading: 'Something\u2019s',
-    headingAccent: 'Coming',
+    eyebrow: 'First Drop',
+    heading: 'Our',
+    headingAccent: 'Premium Pleated Pants',
     subtext:
-      'RYCE is just getting started. The first collection is being finished right now — quietly, carefully, without rushing it.',
-    ctaText: 'Get Notified',
+      'RYCE IS JUST GETTING STARTED SHOP OUR FIRST DROP.',
+    ctaText: 'PURCHASE',
     href: '/shop/pleated-pants',
   },
   {
-    image: '/assets/images/2ND.jpeg',
+    image: '/assets/images/CLASP-JACKET.jpeg',
     eyebrow: 'In the Works',
     heading: 'Simple by',
     headingAccent: 'Nature',

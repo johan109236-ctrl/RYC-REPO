@@ -33,6 +33,7 @@ export type Product = {
   description: string;
   details: string;
   care: string;
+  sizeChart?: string;
 };
 
 export const products: Product[] = [
@@ -42,40 +43,42 @@ export const products: Product[] = [
   // ─────────────────────────────────────────────────────────
   {
     // card
-    id:         'pleated-pants',
-    name:       'Pleated Pants',
+    id:         'CROSS-PLEATED-PANTS',
+    name:       'Cross Pleated Pants',
     price:      'NRS 1500',
-    image:      '/assets/images/PLEATED1.jpg',
-    hoverImage: '/assets/images/PLEATED2.jpg',
+    image:      '/assets/images/HOME.jpg',
+    hoverImage: '/assets/images/HOMER.jpg',
     href:       '/shop/pleated-pants',
     tag:        'Available Now',
-    sizes:      ['S', 'M', 'L', 'XL'],
+    sizes:      ['S', 'M', 'L'],
 
     // detail page
     slug:     'pleated-pants',
     category: 'Pants',
     images: [
-      '/assets/images/PLEATED1.jpg',   // front
-      '/assets/images/PLEATED2.jpg',   // back
-      // add more when you have them:
-      // '/assets/images/PLEATED3.jpg',
-      // '/assets/images/PLEATED4.jpg',
+      '/assets/images/BLACK1.jpeg', 
+      '/assets/images/HOME.jpg',   
+      '/assets/images/HOMER.jpg',
+      '/assets/images/SIZE-CHART.png',
+
+
     ],
     colors: [
       {
         label: 'Black',
         swatch: '#1A1A1A',
-        images: ['/assets/images/PLEATED1.jpg', '/assets/images/PLEATED2.jpg'],
+        images: ['/assets/images/BLACK1.jpeg', '/assets/images/HOME.jpg'],
       },
       {
-        label: 'Grey',
+        label: 'Dark Grey',
         swatch: '#888884',
-        images: ['/assets/images/PLEATED1.jpg', '/assets/images/PLEATED2.jpg'],
+        images: ['/assets/images/HOMER.jpg', '/assets/images/GREY1.jpeg', '/assets/images/BACK-IMAGE-GREY.jpeg'],
       },
     ],
     description: 'Relaxed pleated pants designed for everyday wear. A wide silhouette with a clean drape.',
     details:     '100% Cotton. Relaxed fit. Elasticated waistband with drawstring. Two side pockets.',
     care:        'Machine wash cold. Do not bleach. Line dry in shade. Low iron if needed.',
+    sizeChart: '/assets/images/SIZE-CHART.png',
   },
 
   // ─────────────────────────────────────────────────────────
@@ -83,33 +86,33 @@ export const products: Product[] = [
   // ─────────────────────────────────────────────────────────
   {
     // card
-    id:         'the-drop-pant',
-    name:       'The Drop Pant',
-    price:      'NRS 1500',
-    image:      '/assets/images/1ST.jpeg',
-    hoverImage: '/assets/images/2ND.jpeg',
+    id:         'HENLEY',
+    name:       'HENLEY-TEE',
+    price:      'NRS ???',
+    image:      '/assets/images/HENLEY.jpg',
+    hoverImage: '/assets/images/HENLEY1.jpg',
     href:       '/shop/the-drop-pant',
     tag:        'Coming Soon',
-    sizes:      ['S', 'M', 'L', 'XL'],
+    sizes:      ['S', 'M', 'L'],
     comingSoon: true,
 
     // detail page
-    slug:     'the-drop-pant',
-    category: 'Pants',
+    slug:     'HENLEY',
+    category: 'HENLEY',
     images: [
-      '/assets/images/1ST.jpeg',
-      '/assets/images/2ND.jpeg',
+      '/assets/images/HENLEY.jpg',
+      '/assets/images/HENLEY.jpg',
     ],
     colors: [
       {
         label: 'Black',
         swatch: '#1A1A1A',
-        images: ['/assets/images/1ST.jpeg', '/assets/images/2ND.jpeg'],
+        images: ['/assets/images/HENLEY.jpeg', '/assets/images/HENLEY.jpeg'],
       },
       {
         label: 'Grey',
         swatch: '#888884',
-        images: ['/assets/images/1ST.jpeg', '/assets/images/2ND.jpeg'],
+        images: ['/assets/images/HENLEY.jpeg', '/assets/images/HENLEY.jpeg'],
       },
     ],
     description: 'A relaxed everyday pant with a wide dropped silhouette.',
@@ -117,17 +120,15 @@ export const products: Product[] = [
     care:        'Machine wash cold. Line dry. Low iron.',
   },
 
-  // ─────────────────────────────────────────────────────────
-  //  QUARTER ZIPS
-  // ─────────────────────────────────────────────────────────
+
   {
     // card
-    id:         'quarter-zips',
-    name:       'Quarter Zips',
-    price:      'NRS 2500',
-    image:      '/assets/images/1ST.jpeg',
-    hoverImage: '/assets/images/2ND.jpeg',
-    href:       '/shop/quarter-zips',
+    id:         'CLASPHOME',
+    name:       'CLASP HOME',
+    price:      'NRS ??',
+    image:      '/assets/images/CLASPHOME.jpeg',
+    hoverImage: '/assets/images/CLASPHOME.jpeg',
+    href:       '/shop/CLASPHOME',
     tag:        'Coming Soon',
     sizes:      ['S', 'M', 'L', 'XL'],
     comingSoon: true,
@@ -136,47 +137,19 @@ export const products: Product[] = [
     slug:     'quarter-zips',
     category: 'Upper',
     images: [
-      '/assets/images/1ST.jpeg',
-      '/assets/images/2ND.jpeg',
+      '/assets/images/CLASPHOME.jpeg',
+      '/assets/images/CLASPHOME.jpeg',
     ],
     colors: [
       { label: 'Navy',  swatch: '#1C2B4A' },
       { label: 'Cream', swatch: '#E8E0D0' },
     ],
-    description: 'A clean quarter-zip in a boxy silhouette. Built for layering.',
+    description: 'A clean clasp jacket made for winters',
     details:     '100% Cotton fleece. Ribbed cuffs and hem. Metal zip.',
     care:        'Machine wash cold. Tumble dry low. Do not iron zip.',
+
   },
 
-  // ─────────────────────────────────────────────────────────
-  //  PREMIUM GIRLS TRENCH COAT
-  // ─────────────────────────────────────────────────────────
-  {
-    // card
-    id:         'premium-girls-trench-coat',
-    name:       'Premium Girls Trench Coat',
-    price:      'NRS 1500',
-    image:      '/assets/images/1ST.jpeg',
-    hoverImage: '/assets/images/2ND.jpeg',
-    href:       '/shop/premium-girls-trench-coat',
-    tag:        'Coming Soon',
-    sizes:      ['S', 'M', 'L', 'XL'],
-    comingSoon: true,
-
-    // detail page
-    slug:     'premium-girls-trench-coat',
-    category: 'Outerwear',
-    images: [
-      '/assets/images/1ST.jpeg',
-      '/assets/images/2ND.jpeg',
-    ],
-    colors: [
-      { label: 'Camel', swatch: '#C19A6B' },
-      { label: 'Black', swatch: '#1A1A1A' },
-    ],
-    description: 'A structured trench coat with a tailored fit. Timeless outerwear for any season.',
-    details:     'Outer: 60% Polyester, 40% Cotton. Fully lined. Belt included. Double-breasted.',
-    care:        'Dry clean only. Store on hanger.',
-  },
+  
 
 ];

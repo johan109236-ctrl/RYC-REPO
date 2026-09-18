@@ -22,25 +22,21 @@ export type Product = {
 type ProductCardProps = {
   product: Product;
   onAddToCart?: (product: Product, size: string) => void;
-  onQuickView?: (product: Product) => void;
-  onToggleWishlist?: (product: Product) => void;
+  
+  
 };
 
 export default function ProductCard({
   product,
   onAddToCart,
-  onQuickView,
-  onToggleWishlist,
+  
 }: ProductCardProps) {
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
-  const handleWishlist = () => {
-    setIsWishlisted((prev) => !prev);
-    onToggleWishlist?.(product);
-  };
+
 
   const handleAddToCart = () => {
     if (product.comingSoon || !selectedSize) return;
@@ -74,22 +70,9 @@ export default function ProductCard({
           </span>
         )}
 
-        <button
-          type="button"
-          className={`product-card-wishlist ${isWishlisted ? 'is-active' : ''}`}
-          onClick={handleWishlist}
-          aria-label="Add to wishlist"
-        >
-          <i className={isWishlisted ? 'bi bi-heart-fill' : 'bi bi-heart'} />
-        </button>
 
-        <button
-          type="button"
-          className="product-card-quickview"
-          onClick={() => onQuickView?.(product)}
-        >
-          Quick View
-        </button>
+
+
       </div>
 
       <div className="product-card-info">

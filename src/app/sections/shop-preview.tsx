@@ -9,7 +9,7 @@ export default function ShopPreview() {
   return (
     <section id="shop-preview">
       <div className="shop-preview-header">
-        <span className="shop-preview-eyebrow">The Collection</span>
+        <span className="shop-preview-eyebrow">Our Collection</span>
         <h2 className="shop-preview-heading">Shop RYCE</h2>
         <Link href="/shop" className="shop-preview-view-all">
           View All →

@@ -23,7 +23,7 @@ export default function ProductPage({ data }: { data: any }) {
     data.images ??
     [];
 
-    const canAddToCart = !isComingSoon && Boolean(selectedSize) && (!hasColors || Boolean(selectedColor));
+  const canAddToCart = !isComingSoon && Boolean(selectedSize) && (!hasColors || Boolean(selectedColor));
 
   const handleAddToCart = () => {
     if (!canAddToCart || !selectedSize) return;
@@ -126,21 +126,16 @@ export default function ProductPage({ data }: { data: any }) {
           top: 50%;
           transform: translateY(-50%);
           z-index: 10;
-
           width: 40px;
           height: 40px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           background: var(--bg-primary, #fff);
           border: 1px solid var(--border-subtle, rgba(43,42,38,0.18));
           color: var(--text-primary);
-
           cursor: pointer;
           transition: background 0.2s ease, color 0.2s ease;
-
           font-size: 1rem;
           line-height: 1;
         }
@@ -387,9 +382,9 @@ export default function ProductPage({ data }: { data: any }) {
         }
 
         .pp-coming-soon-note { font-weight: 600; color: var(--text-primary); }
-.pp-color-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.pp-color-btn:disabled:hover { transform: none; }
-.pp-size-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .pp-color-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .pp-color-btn:disabled:hover { transform: none; }
+        .pp-size-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
         /* ── DESCRIPTION ──────────────────────────────────── */
         .pp-desc {
@@ -436,17 +431,41 @@ export default function ProductPage({ data }: { data: any }) {
           line-height: 1;
           transition: transform 0.25s ease;
         }
-        .pp-accordion-item.is-open .pp-accordion-icon { transform: rotate(45deg); }
+        .pp-accordion-item.is-open .pp-accordion-icon {
+          transform: rotate(45deg);
+        }
+
+        /* ── ACCORDION SMOOTH ANIMATION ───────────────────── */
         .pp-accordion-body {
-          display: none;
-          padding: 0 0 1.25rem;
+          display: grid;
+          grid-template-rows: 0fr;
+          transition: grid-template-rows 0.3s ease;
+          overflow: hidden;
+        }
+        .pp-accordion-item.is-open .pp-accordion-body {
+          grid-template-rows: 1fr;
+        }
+        .pp-accordion-body-inner {
+          overflow: hidden;
+          padding: 0;
+          transition: padding 0.3s ease;
           font-family: 'Montserrat', sans-serif;
           font-size: 0.78rem;
           font-weight: 400;
           line-height: 1.8;
           color: var(--text-secondary);
         }
-        .pp-accordion-item.is-open .pp-accordion-body { display: block; }
+        .pp-accordion-item.is-open .pp-accordion-body-inner {
+          padding: 0 0 1.25rem;
+        }
+
+        /* ── SIZE CHART IMAGE ─────────────────────────────── */
+        .pp-size-chart-img {
+          width: 100%;
+          height: auto;
+          display: block;
+          border: 1px solid var(--border-subtle, rgba(43,42,38,0.1));
+        }
 
         /* ── MOBILE ───────────────────────────────────────── */
         @media (max-width: 768px) {
@@ -477,7 +496,6 @@ export default function ProductPage({ data }: { data: any }) {
           <div className="pp-gallery">
             <div className="pp-slide">
 
-              {/* IMAGES — only active one is visible */}
               {activeImages.map((img: string, i: number) => (
                 <img
                   key={i}
@@ -487,14 +505,12 @@ export default function ProductPage({ data }: { data: any }) {
                 />
               ))}
 
-              {/* PREV ARROW */}
               {total > 1 && (
                 <button className="pp-arrow pp-arrow--prev" onClick={prev} aria-label="Previous image">
                   &#8592;
                 </button>
               )}
 
-              {/* NEXT ARROW */}
               {total > 1 && (
                 <button className="pp-arrow pp-arrow--next" onClick={next} aria-label="Next image">
                   &#8594;
@@ -503,7 +519,6 @@ export default function ProductPage({ data }: { data: any }) {
 
             </div>
 
-            {/* DOTS */}
             {total > 1 && (
               <div className="pp-dots">
                 {activeImages.map((_: string, i: number) => (
@@ -517,7 +532,6 @@ export default function ProductPage({ data }: { data: any }) {
               </div>
             )}
 
-            {/* COUNTER  e.g. 1 / 4 */}
             {total > 1 && (
               <div className="pp-counter">
                 {currentImg + 1} / {total}
@@ -530,7 +544,7 @@ export default function ProductPage({ data }: { data: any }) {
 
             <span className="pp-tag">{data.category}</span>
             <h1 className="pp-name">{data.name}</h1>
-                        <div className="pp-price">{data.price}</div>
+            <div className="pp-price">{data.price}</div>
             {isComingSoon ? (
               <div className="pp-price-note pp-coming-soon-note">Not available for order yet — check back soon.</div>
             ) : (
@@ -554,7 +568,7 @@ export default function ProductPage({ data }: { data: any }) {
                       title={color.label}
                       onClick={() => {
                         setSelectedColor(color.label);
-                                                setCurrentImg(0); // reset to first image when color changes
+                        setCurrentImg(0);
                       }}
                       disabled={isComingSoon}
                     />
@@ -571,7 +585,7 @@ export default function ProductPage({ data }: { data: any }) {
               {data.sizes?.map((size: string) => (
                 <button
                   key={size}
-                                    className={`pp-size-btn ${selectedSize === size ? 'is-selected' : ''}`}
+                  className={`pp-size-btn ${selectedSize === size ? 'is-selected' : ''}`}
                   onClick={() => setSelectedSize(size)}
                   disabled={isComingSoon}
                 >
@@ -623,7 +637,9 @@ export default function ProductPage({ data }: { data: any }) {
                 >
                   Details <span className="pp-accordion-icon">+</span>
                 </button>
-                <div className="pp-accordion-body">{data.details}</div>
+                <div className="pp-accordion-body">
+                  <div className="pp-accordion-body-inner">{data.details}</div>
+                </div>
               </div>
 
               <div className={`pp-accordion-item ${openAccordion === 'care' ? 'is-open' : ''}`}>
@@ -633,8 +649,31 @@ export default function ProductPage({ data }: { data: any }) {
                 >
                   Care <span className="pp-accordion-icon">+</span>
                 </button>
-                <div className="pp-accordion-body">{data.care}</div>
+                <div className="pp-accordion-body">
+                  <div className="pp-accordion-body-inner">{data.care}</div>
+                </div>
               </div>
+
+              {/* SIZE CHART */}
+              {data.sizeChart && (
+                <div className={`pp-accordion-item ${openAccordion === 'sizechart' ? 'is-open' : ''}`}>
+                  <button
+                    className="pp-accordion-trigger"
+                    onClick={() => setOpenAccordion(openAccordion === 'sizechart' ? null : 'sizechart')}
+                  >
+                    Size Chart <span className="pp-accordion-icon">+</span>
+                  </button>
+                  <div className="pp-accordion-body">
+                    <div className="pp-accordion-body-inner">
+                      <img
+                        src={data.sizeChart}
+                        alt="Size Chart"
+                        className="pp-size-chart-img"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
             </div>
           </div>
