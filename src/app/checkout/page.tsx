@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { useCart, parsePrice } from '../context/CartContext';
 import './checkout.css';
 
-const OUTSIDE_VALLEY_DELIVERY_FEE = 100;
-
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const [placing, setPlacing] = useState(false);
@@ -26,9 +24,6 @@ export default function CheckoutPage() {
   const update = (field: keyof typeof form) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => setForm((f) => ({ ...f, [field]: e.target.value }));
-
-  const deliveryFee = form.deliveryArea === 'outside-valley' ? OUTSIDE_VALLEY_DELIVERY_FEE : 0;
-  const total = subtotal + deliveryFee;
 
   const canSubmit =
     items.length > 0 &&
@@ -65,7 +60,7 @@ export default function CheckoutPage() {
           qty: i.qty,
           price: i.price,
         })),
-        total,
+        total: subtotal,
       }),
     }).catch((err) => {
       console.error('Order placed, but notification failed:', err);
@@ -166,8 +161,8 @@ export default function CheckoutPage() {
 
           {form.deliveryArea === 'outside-valley' && (
             <p className="checkout-delivery-note">
-              A flat delivery charge of NRS {OUTSIDE_VALLEY_DELIVERY_FEE} applies for
-              locations outside Kathmandu Valley.
+              Delivery charges for locations outside Kathmandu Valley will be
+              confirmed separately.
             </p>
           )}
 
@@ -270,7 +265,7 @@ export default function CheckoutPage() {
               {form.deliveryArea === 'kathmandu-valley'
                 ? 'Included'
                 : form.deliveryArea === 'outside-valley'
-                  ? `NRS ${OUTSIDE_VALLEY_DELIVERY_FEE}`
+                  ? 'Calculated separately'
                   : 'Select location'}
             </span>
           </div>
@@ -279,7 +274,7 @@ export default function CheckoutPage() {
 
           <div className="checkout-total-row checkout-total-grand">
             <span>Total</span>
-            <span>NRS {total.toLocaleString()}</span>
+            <span>NRS {subtotal.toLocaleString()}</span>
           </div>
 
           {form.deliveryArea === 'kathmandu-valley' && (
@@ -290,8 +285,8 @@ export default function CheckoutPage() {
 
           {form.deliveryArea === 'outside-valley' && (
             <p className="checkout-summary-note">
-              A flat NRS {OUTSIDE_VALLEY_DELIVERY_FEE} delivery charge for locations
-              outside Kathmandu Valley has been added to your total.
+              Additional delivery charges may apply for orders outside
+              Kathmandu Valley and will be confirmed separately.
             </p>
           )}
         </div>
