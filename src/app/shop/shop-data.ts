@@ -35,7 +35,7 @@ export const products: Product[] = [
     // card
     id:         'CROSS-PLEATED-PANTS',
     name:       'Cross Pleated Pants',
-    price:      'NRS 1500',
+    price:      'NRS 1590',
     image:      '/assets/images/HOME.jpg',
     hoverImage: '/assets/images/HOMER.jpg',
     href:       '/shop/pleated-pants',
