@@ -47,7 +47,8 @@
 }
 
 .checkout-field input,
-.checkout-field textarea {
+.checkout-field textarea,
+.checkout-field select {
   font-family: 'Montserrat', sans-serif;
   font-size: 0.9rem;
   text-transform: none;
@@ -59,9 +60,63 @@
   outline: none;
 }
 
+.checkout-field select {
+  cursor: pointer;
+}
+
 .checkout-field input:focus,
-.checkout-field textarea:focus {
+.checkout-field textarea:focus,
+.checkout-field select:focus {
   border-color: var(--text-primary);
+}
+
+.checkout-delivery-note,
+.checkout-payment-note {
+  font-size: 0.68rem;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.checkout-payment-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-subtle, rgba(43, 42, 38, 0.2));
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.checkout-payment-option:hover {
+  border-color: var(--text-primary);
+}
+
+.checkout-payment-option:has(input:checked) {
+  border-color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+.checkout-payment-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--text-primary);
+  cursor: pointer;
+  margin: 0;
+}
+
+.checkout-payment-option input[type="radio"] {
+  outline: none;
+}
+
+.checkout-payment-option input[type="radio"]:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
 }
 
 .checkout-submit-btn {

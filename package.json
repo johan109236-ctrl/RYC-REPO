@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@react-email/render": "^2.1.0",
     "@supabase/supabase-js": "^2.116.0",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",

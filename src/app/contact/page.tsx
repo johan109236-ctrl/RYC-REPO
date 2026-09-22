@@ -14,12 +14,22 @@ export default function ContactPage() {
           Have a question about RYCE, an order, or something else? Reach out and we&apos;ll get back to you.
         </p>
 
-        <div className="mt-10 border-t border-[var(--border-subtle,rgba(43,42,38,0.12))] pt-8">
+        <div className="mt-10 border-t border-[var(--border-subtle,rgba(43,42,38,0.12))] pt-8 flex flex-col items-center gap-4">
           <a
-            href="mailto:hello@ryceclothing.com"
+            href="mailto:rycenepal@gmail.com"
             className="font-[Montserrat,sans-serif] text-sm tracking-wide !text-[var(--text-primary)] hover:opacity-60 transition-opacity"
           >
-            hello@ryceclothing.com
+            rycenepal@gmail.com
+          </a>
+
+          <a
+            href="https://wa.me/9779808968520"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-[Montserrat,sans-serif] text-sm tracking-wide !text-[var(--text-primary)] hover:opacity-60 transition-opacity inline-flex items-center gap-2"
+          >
+            <i className="bi bi-whatsapp" />
+            Chat on WhatsApp
           </a>
         </div>
 

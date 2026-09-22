@@ -1,34 +1,26 @@
-// ─────────────────────────────────────────────────────────────
-//  RYCE SHOP DATA
-//  One file feeds both:
-//    • /shop          → ProductCard (uses image, hoverImage, href)
-//    • /shop/[slug]   → ProductPage (uses images, colors, description, etc.)
-// ─────────────────────────────────────────────────────────────
+
 
 export type Color = {
   label: string;
   swatch: string;
-  images?: string[];  // optional — only if this color has its own photos
+  images?: string[];  
 };
 
 export type Product = {
-  // ── Card fields (shop grid) ──────────────────────────────
   id: string;
   name: string;
   price: string;
-  image: string;       // card front image
+  image: string;       
   hoverImage: string;  // card hover image
   href: string;        // constructed from slug — keep for ProductCard
   tag: string;
   sizes: string[];
   comingSoon?: boolean;
 
-  // ── Slug page fields
 
-  // ── Slug page fields (product detail) ───────────────────
   slug: string;
   category: string;
-  images: string[];    // all photos, stacked in gallery
+  images: string[];    
   colors: Color[];
   description: string;
   details: string;
@@ -38,9 +30,7 @@ export type Product = {
 
 export const products: Product[] = [
 
-  // ─────────────────────────────────────────────────────────
-  //  PLEATED PANTS
-  // ─────────────────────────────────────────────────────────
+
   {
     // card
     id:         'CROSS-PLEATED-PANTS',
@@ -67,7 +57,7 @@ export const products: Product[] = [
       {
         label: 'Black',
         swatch: '#1A1A1A',
-        images: ['/assets/images/BLACK1.jpeg', '/assets/images/HOME.jpg'],
+        images: ['/assets/images/BLACK1.jpeg', '/assets/images/HOME.jpg','/assets/images/MORE1.png','/assets/images/MORE2.png', '/assets/images/MORE3.png'],
       },
       {
         label: 'Dark Grey',
@@ -81,22 +71,17 @@ export const products: Product[] = [
     sizeChart: '/assets/images/SIZE-CHART.png',
   },
 
-  // ─────────────────────────────────────────────────────────
-  //  THE DROP PANT
-  // ─────────────────────────────────────────────────────────
   {
-    // card
     id:         'HENLEY',
     name:       'HENLEY-TEE',
-    price:      'NRS ???',
+    price:      'NRS --',
     image:      '/assets/images/HENLEY.jpg',
-    hoverImage: '/assets/images/HENLEY1.jpg',
+    hoverImage: '/assets/images/whitehenley.jpg',
     href:       '/shop/the-drop-pant',
     tag:        'Coming Soon',
     sizes:      ['S', 'M', 'L'],
     comingSoon: true,
 
-    // detail page
     slug:     'HENLEY',
     category: 'HENLEY',
     images: [
@@ -123,11 +108,11 @@ export const products: Product[] = [
 
   {
     // card
-    id:         'CLASPHOME',
-    name:       'CLASP HOME',
-    price:      'NRS ??',
-    image:      '/assets/images/CLASPHOME.jpeg',
-    hoverImage: '/assets/images/CLASPHOME.jpeg',
+    id:         'CLASPCARDIGAN',
+    name:       'CLASP FIREMAN KNITTED CARDIGAN',
+    price:      'NRS --',
+    image:      '/assets/images/FIREMANBLACK.jpeg',
+    hoverImage: '/assets/images/FIREMANWHITE.jpeg',
     href:       '/shop/CLASPHOME',
     tag:        'Coming Soon',
     sizes:      ['S', 'M', 'L', 'XL'],
@@ -137,8 +122,8 @@ export const products: Product[] = [
     slug:     'quarter-zips',
     category: 'Upper',
     images: [
-      '/assets/images/CLASPHOME.jpeg',
-      '/assets/images/CLASPHOME.jpeg',
+      '/assets/images/FIREMANBLACK.jpeg',
+      '/assets/images/FIREMANWHITE.jpeg',
     ],
     colors: [
       { label: 'Navy',  swatch: '#1C2B4A' },

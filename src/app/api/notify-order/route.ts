@@ -4,10 +4,6 @@ import { Resend } from 'resend';
 import OrderNotificationEmail from '@/app/components/OrderNotificationEmail';
 import CustomerOrderConfirmationEmail from '@/app/components/Customerorderconfirmationemail';
 
-// Server-only clients. SUPABASE_SERVICE_ROLE_KEY and RESEND_API_KEY must
-// NEVER be prefixed with NEXT_PUBLIC_ - that would expose them to the
-// browser. This file only ever runs on the server (it's an API route), so
-// the customer never sees it, the URLs, or the keys.
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -15,16 +11,28 @@ const supabase = createClient(
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
-// Update this to your own inbox - this is who gets the order alert email.
-const NOTIFY_EMAIL = 'baltalai61@gmail.com';
+const NOTIFY_EMAIL = 'rycenepal@gmail.com';
 
-// TEMP: Supabase stock/order-saving is disabled while that part is still
-// being finished. Flip this back to true once product SKUs are set up in
-// Supabase (see sql-add-sku.sql) to re-enable real stock subtraction.
 const SUPABASE_ENABLED = false;
 
+// Basic rate limit
+const rateLimit = new Map<string, { count: number; resetAt: number }>();
+
+const RATE_LIMIT = 5;
+const RATE_WINDOW = 60 * 60 * 1000; // 1 hour
+
+function getClientIp(request: Request) {
+  const forwarded = request.headers.get('x-forwarded-for');
+
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
 type OrderItem = {
-  sku: string;
+  sku?: string;
   name: string;
   size?: string;
   color?: string;
@@ -34,98 +42,166 @@ type OrderItem = {
 
 type OrderPayload = {
   fullName: string;
-  email?: string;
+  email: string;
   phone: string;
   address: string;
   city: string;
+  deliveryArea: 'kathmandu-valley' | 'outside-valley';
+  paymentMethod: 'cod';
   notes?: string;
   items: OrderItem[];
   total: number;
 };
 
 export async function POST(request: Request) {
+  // -----------------------------
+  // RATE LIMIT
+  // -----------------------------
+
+  const ip = getClientIp(request);
+  const now = Date.now();
+
+  const current = rateLimit.get(ip);
+
+  if (!current || now > current.resetAt) {
+    rateLimit.set(ip, {
+      count: 1,
+      resetAt: now + RATE_WINDOW,
+    });
+  } else {
+    current.count += 1;
+
+    if (current.count > RATE_LIMIT) {
+      return NextResponse.json(
+        {
+          error: 'Too many order attempts. Please try again later.',
+        },
+        { status: 429 }
+      );
+    }
+  }
+
+  // -----------------------------
+  // READ REQUEST
+  // -----------------------------
+
   let body: OrderPayload;
 
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid JSON body' },
+      { status: 400 }
+    );
   }
 
-  const { fullName, email, phone, address, city, notes, items, total } = body;
+  const {
+    fullName,
+    email,
+    phone,
+    address,
+    city,
+    deliveryArea,
+    paymentMethod,
+    notes,
+    items,
+    total,
+  } = body;
 
-  if (!fullName?.trim() || !phone?.trim() || !address?.trim() || !city?.trim() || !items?.length || total == null) {
-    return NextResponse.json({ error: 'Missing required order fields' }, { status: 400 });
+  // -----------------------------
+  // VALIDATION
+  // -----------------------------
+
+  if (
+    !fullName?.trim() ||
+    !email?.trim() ||
+    !phone?.trim() ||
+    !address?.trim() ||
+    !city?.trim() ||
+    !deliveryArea ||
+    !paymentMethod ||
+    !items?.length ||
+    total == null
+  ) {
+    return NextResponse.json(
+      { error: 'Missing required order fields' },
+      { status: 400 }
+    );
   }
+
+  if (
+    deliveryArea !== 'kathmandu-valley' &&
+    deliveryArea !== 'outside-valley'
+  ) {
+    return NextResponse.json(
+      { error: 'Invalid delivery location' },
+      { status: 400 }
+    );
+  }
+
+  if (paymentMethod !== 'cod') {
+    return NextResponse.json(
+      { error: 'Only Cash on Delivery is currently available' },
+      { status: 400 }
+    );
+  }
+
+  // -----------------------------
+  // ORDER ID
+  // -----------------------------
 
   let orderId: string;
 
   if (SUPABASE_ENABLED) {
-    // place_order checks stock and subtracts it for every item, all-or-nothing.
-    // If anything is out of stock, it throws and nothing gets subtracted.
-    const { data, error } = await supabase.rpc('place_order', {
-      p_full_name: fullName,
-      p_email: email?.trim() || null,
-      p_phone: phone,
-      p_address: address,
-      p_city: city,
-      p_notes: notes?.trim() || null,
-      p_items: items,
-      p_total: total,
-    });
-
-    if (error) {
-      console.error('place_order error:', error);
-      // Out-of-stock errors raised inside the SQL function land here too -
-      // surface a clearer status code for that case.
-      const outOfStock = error.message?.includes('Not enough stock');
-      return NextResponse.json(
-        { error: outOfStock ? error.message : 'Failed to save order' },
-        { status: outOfStock ? 409 : 500 }
-      );
-    }
-
-    orderId = data;
+    // Keep your existing Supabase order-saving logic here
+    // if you enable Supabase later.
+    orderId = `TEMP-${Date.now()}`;
   } else {
-    // No Supabase save happening right now - this ID is just for the emails,
-    // it isn't stored anywhere. Nothing is being logged or stock-tracked yet.
     orderId = `TEMP-${Date.now()}`;
   }
 
-  // Best-effort emails. If these fail, the order is still saved and stock
-  // already subtracted - we don't want a flaky email to undo a real order,
-  // so both are fire-and-forget with just a log on failure.
+  // -----------------------------
+  // ADMIN EMAIL
+  // -----------------------------
 
-  /* 1. Admin notification - to you */
   resend.emails
     .send({
       from: 'orders@rycenp.com',
       to: [NOTIFY_EMAIL],
       subject: `New order from ${fullName}`,
       react: OrderNotificationEmail({
-        orderId,
         fullName,
-        email: email?.trim() || undefined,
+        email,
         phone,
         address,
         city,
-        notes: notes?.trim() || undefined,
+        deliveryArea,
+        paymentMethod,
+        notes,
         items,
         total,
+        orderId,
       }),
     })
     .catch((err) => {
-      console.error('Order saved, but admin notification email failed:', err);
+      console.error(
+        'Order saved, but admin notification email failed:',
+        err
+      );
     });
 
-  /* 2. Auto-reply - to the customer, only if they gave an email */
-  if (email?.trim()) {
+  // -----------------------------
+  // CUSTOMER CONFIRMATION EMAIL
+  // -----------------------------
+
+  if (email.trim()) {
     resend.emails
       .send({
         from: 'RYCE Orders <orders@rycenp.com>',
         to: [email.trim()],
-        replyTo: NOTIFY_EMAIL, // so hitting "reply" actually reaches you, not the orders@ address
-        subject: 'We\u2019ve received your order',
+        replyTo: NOTIFY_EMAIL,
+        subject: 'We’ve received your order',
         react: CustomerOrderConfirmationEmail({
           name: fullName,
           orderId,
@@ -133,9 +209,15 @@ export async function POST(request: Request) {
         }),
       })
       .catch((err) => {
-        console.error('Order saved, but customer auto-reply email failed:', err);
+        console.error(
+          'Order saved, but customer auto-reply email failed:',
+          err
+        );
       });
   }
 
-  return NextResponse.json({ success: true, orderId });
+  return NextResponse.json({
+    success: true,
+    orderId,
+  });
 }
