@@ -36,8 +36,8 @@ export const products: Product[] = [
     id:         'CROSS-PLEATED-PANTS',
     name:       'Cross Pleated Pants',
     price:      'NRS 1590',
-    image:      '/assets/images/HOME.jpg',
-    hoverImage: '/assets/images/HOMER.jpg',
+    image:      '/assets/images/MORE1.png',
+    hoverImage: '/assets/images/BACK-IMAGE-GREY.jpeg',
     href:       '/shop/pleated-pants',
     tag:        'Available Now',
     sizes:      ['S', 'M', 'L'],
@@ -46,9 +46,9 @@ export const products: Product[] = [
     slug:     'pleated-pants',
     category: 'Pants',
     images: [
-      '/assets/images/BLACK1.jpeg', 
-      '/assets/images/HOME.jpg',   
-      '/assets/images/HOMER.jpg',
+      '/assets/images/MORE1.png', 
+      '/assets/images/MORE2.png',   
+      '/assets/images/MORE3.png',
       '/assets/images/SIZE-CHART.png',
 
 
@@ -57,16 +57,16 @@ export const products: Product[] = [
       {
         label: 'Black',
         swatch: '#1A1A1A',
-        images: ['/assets/images/BLACK1.jpeg', '/assets/images/HOME.jpg','/assets/images/MORE1.png','/assets/images/MORE2.png', '/assets/images/MORE3.png'],
+        images: [ '/assets/images/MORE1.png','/assets/images/MORE2.png', '/assets/images/MORE3.png'],
       },
       {
         label: 'Dark Grey',
         swatch: '#888884',
-        images: ['/assets/images/HOMER.jpg', '/assets/images/GREY1.jpeg', '/assets/images/BACK-IMAGE-GREY.jpeg'],
+        images: ['/assets/images/FRONTGREY.png', '/assets/images/BACK-IMAGE-GREY.jpeg'],
       },
     ],
     description: 'Relaxed pleated pants designed for everyday wear. A wide silhouette with a clean drape.',
-    details:     '100% Cotton. Relaxed fit. Elasticated waistband with drawstring. Two side pockets.',
+    details:     '65% Polyester | 35% Viscose.',
     care:        'Machine wash cold. Do not bleach. Line dry in shade. Low iron if needed.',
     sizeChart: '/assets/images/SIZE-CHART.png',
   },

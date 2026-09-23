@@ -181,6 +181,8 @@ export default function ProductPage({ data }: { data: any }) {
         .pp-info {
           position: sticky;
           top: 5rem;
+          max-height: calc(100vh - 6rem);
+          overflow-y: auto;
         }
 
         /* ── CATEGORY TAG ─────────────────────────────────── */
@@ -369,6 +371,13 @@ export default function ProductPage({ data }: { data: any }) {
           opacity: 0.3;
           cursor: not-allowed;
         }
+        
+        .pp-slide-img.is-contain {
+            object-fit: contain;
+            object-position: center;
+            background: #fff;
+            }
+
         .pp-qty-stepper span {
           min-width: 32px;
           text-align: center;
@@ -473,8 +482,7 @@ export default function ProductPage({ data }: { data: any }) {
           .pp-breadcrumb { margin-bottom: 1.25rem; }
           .pp-layout     { grid-template-columns: 1fr; gap: 1.75rem; }
           .pp-gallery    { position: static; }
-          .pp-info       { position: static; }
-          .pp-name       { font-size: clamp(1.5rem, 6vw, 2rem); }
+          .pp-info       { position: static; max-height: none; overflow: visible; }          .pp-name       { font-size: clamp(1.5rem, 6vw, 2rem); }
           .pp-add-btn    { padding: 0.95rem 1.5rem; }
           .pp-arrow      { width: 34px; height: 34px; font-size: 0.85rem; }
         }
@@ -498,11 +506,13 @@ export default function ProductPage({ data }: { data: any }) {
 
               {activeImages.map((img: string, i: number) => (
                 <img
-                  key={i}
-                  src={img}
-                  alt={`${data.name} – view ${i + 1}`}
-                  className={`pp-slide-img ${i === currentImg ? 'is-active' : ''}`}
-                />
+                    key={i}
+                    src={img}
+                    alt={`${data.name} – view ${i + 1}`}
+                    className={`pp-slide-img ${i === currentImg ? 'is-active' : ''} ${
+                        img.includes('SIZE-CHART') ? 'is-contain' : ''
+                    }`}
+                    />
               ))}
 
               {total > 1 && (

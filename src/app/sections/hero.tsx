@@ -26,7 +26,18 @@ const slides: Slide[] = [
     href: '/shop/pleated-pants',
   },
   {
-    image: '/assets/images/CLASPHOME.jpeg',
+    image: '/assets/images/HOMER.jpg',
+    eyebrow: 'First Drop',
+    heading: 'Our',
+    headingAccent: 'Premium Pleated Pants',
+    subtext:
+      'RYCE IS JUST GETTING STARTED. DISCOVER OUR FIRST DROP.',
+    ctaText: 'PURCHASE',
+    href: '/shop/pleated-pants',
+  },
+  
+  {
+    image: '/assets/images/HOMERCLASP.png',
     eyebrow: 'In the Works',
     heading: 'Simple by',
     headingAccent: 'Nature',
