@@ -49,7 +49,7 @@ export const products: Product[] = [
       '/assets/images/MORE1.png', 
       '/assets/images/MORE2.png',   
       '/assets/images/MORE3.png',
-      '/assets/images/SIZE-CHART.png',
+      '/assets/images/SIZE-CHART2.jpeg',
 
 
     ],
