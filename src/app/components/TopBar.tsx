@@ -7,9 +7,11 @@ import './topBar.css';
 import SearchOverlay from './SearchOverlay';
 import { useCart } from '../context/CartContext';
 
-const leftLinks = [
+  const leftLinks = [
+  { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
 ];
+
 
 const rightLinks: { label: string; href: string }[] = [];
 
@@ -59,10 +61,10 @@ export default function Topbar() {
 
     <Link href="/" className="header-logo" aria-label="RYCE — home">
   <Image
-    src="/assets/images/transparent.png"
+    src="/assets/images/newtr.png"
     alt="RYCE"
     width={155}
-    height={78}
+    height={54}
     priority
   />
 </Link>

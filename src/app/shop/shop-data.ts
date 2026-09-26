@@ -49,7 +49,9 @@ export const products: Product[] = [
       '/assets/images/MORE1.png', 
       '/assets/images/MORE2.png',   
       '/assets/images/MORE3.png',
-      '/assets/images/SIZE-CHART2.jpeg',
+      '/assets/images/FRONTGREY.png',
+    '/assets/images/BACK-IMAGE-GREY.jpeg',
+    '/assets/images/SIZE-CHART2.jpeg',
 
 
     ],
@@ -67,7 +69,7 @@ export const products: Product[] = [
     ],
     description: 'Relaxed pleated pants designed for everyday wear. A wide silhouette with a clean drape.',
     details:     '65% Polyester | 35% Viscose.',
-    care:        'Machine wash cold. Do not bleach. Line dry in shade. Low iron if needed.',
+    care:        'Iron after washing to maintain the pleats. Do not bleach.',
     sizeChart: '/assets/images/SIZE-CHART.png',
   },
 

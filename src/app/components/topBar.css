@@ -82,22 +82,20 @@
 /* =========================
    LOGO
    ========================= */
-
 .header-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-
   width: 180px;
   height: 100%;
-
   text-decoration: none !important;
 }
 
 .header-logo img {
   display: block;
-  width: 155px;
-  height: auto;
+  height: 70%;        /* fits inside header-height, never grows the row */
+  width: auto;         /* scales proportionally from the height */
+  max-width: 155px;    /* still won't get too wide */
   object-fit: contain;
 }
 
