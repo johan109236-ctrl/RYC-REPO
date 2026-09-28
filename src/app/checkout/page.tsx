@@ -9,6 +9,7 @@ export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(false);
+  const [error, setError] = useState('');
 
   const [form, setForm] = useState({
     fullName: '',
@@ -35,42 +36,51 @@ export default function CheckoutPage() {
     form.deliveryArea &&
     form.paymentMethod === 'cod';
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (!canSubmit || placing) return;
 
     setPlacing(true);
+    setError('');
 
-    fetch('/api/notify-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fullName: form.fullName,
-        email: form.email,
-        phone: form.phone,
-        address: form.address,
-        city: form.city,
-        deliveryArea: form.deliveryArea,
-        paymentMethod: form.paymentMethod,
-        notes: form.notes,
-        items: items.map((i) => ({
-          name: i.name,
-          size: i.size,
-          color: i.color,
-          qty: i.qty,
-          price: i.price,
-        })),
-        total: subtotal,
-      }),
-    }).catch((err) => {
-      console.error('Order placed, but notification failed:', err);
-    });
+    try {
+      const res = await fetch('/api/notify-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: form.fullName,
+          email: form.email,
+          phone: form.phone,
+          address: form.address,
+          city: form.city,
+          deliveryArea: form.deliveryArea,
+          paymentMethod: form.paymentMethod,
+          notes: form.notes,
+          items: items.map((i) => ({
+            name: i.name,
+            size: i.size,
+            color: i.color,
+            qty: i.qty,
+            price: i.price,
+          })),
+          total: subtotal,
+        }),
+      });
 
-    window.setTimeout(() => {
-      setPlacing(false);
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || `Request failed (${res.status})`);
+      }
+
       setPlaced(true);
       clearCart();
-    }, 900);
+    } catch (err) {
+      console.error('Order failed:', err);
+      setError("We couldn't place your order. Please try again.");
+    } finally {
+      setPlacing(false);
+    }
   };
 
   if (placed) {
@@ -212,6 +222,8 @@ export default function CheckoutPage() {
               onChange={update('notes')}
             />
           </label>
+
+          {error && <p className="checkout-error">{error}</p>}
 
           <button
             type="submit"
