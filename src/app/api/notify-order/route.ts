@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 import OrderNotificationEmail from '@/app/components/OrderNotificationEmail';
 import CustomerOrderConfirmationEmail from '@/app/components/Customerorderconfirmationemail';
 
-const NOTIFY_EMAIL = 'rycenepal@gmail.com';
+const NOTIFY_EMAIL = 'baltalai61@gmail.com';
 
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
 
