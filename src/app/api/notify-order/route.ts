@@ -1,25 +1,14 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import OrderNotificationEmail from '@/app/components/OrderNotificationEmail';
 import CustomerOrderConfirmationEmail from '@/app/components/Customerorderconfirmationemail';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const resend = new Resend(process.env.RESEND_API_KEY!);
-
 const NOTIFY_EMAIL = 'rycenepal@gmail.com';
 
-const SUPABASE_ENABLED = false;
-
-// Basic rate limit
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
 
 const RATE_LIMIT = 5;
-const RATE_WINDOW = 60 * 60 * 1000; // 1 hour
+const RATE_WINDOW = 60 * 60 * 1000;
 
 function getClientIp(request: Request) {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -54,13 +43,10 @@ type OrderPayload = {
 };
 
 export async function POST(request: Request) {
-  // -----------------------------
-  // RATE LIMIT
-  // -----------------------------
+
 
   const ip = getClientIp(request);
   const now = Date.now();
-
   const current = rateLimit.get(ip);
 
   if (!current || now > current.resetAt) {
@@ -81,9 +67,7 @@ export async function POST(request: Request) {
     }
   }
 
-  // -----------------------------
-  // READ REQUEST
-  // -----------------------------
+
 
   let body: OrderPayload;
 
@@ -109,9 +93,6 @@ export async function POST(request: Request) {
     total,
   } = body;
 
-  // -----------------------------
-  // VALIDATION
-  // -----------------------------
 
   if (
     !fullName?.trim() ||
@@ -147,29 +128,32 @@ export async function POST(request: Request) {
     );
   }
 
-  // -----------------------------
-  // ORDER ID
-  // -----------------------------
 
-  let orderId: string;
 
-  if (SUPABASE_ENABLED) {
-    // Keep your existing Supabase order-saving logic here
-    // if you enable Supabase later.
-    orderId = `TEMP-${Date.now()}`;
-  } else {
-    orderId = `TEMP-${Date.now()}`;
+  const orderId = `RYCE-${Date.now()}`;
+
+
+
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    console.error('RESEND_API_KEY is missing');
+
+    return NextResponse.json(
+      { error: 'Order email service is not configured.' },
+      { status: 500 }
+    );
   }
 
-  // -----------------------------
-  // ADMIN EMAIL
-  // -----------------------------
+  const resend = new Resend(apiKey);
 
-  resend.emails
-    .send({
+
+
+  try {
+    const adminResult = await resend.emails.send({
       from: 'orders@rycenp.com',
       to: [NOTIFY_EMAIL],
-      subject: `New order from ${fullName}`,
+      subject: `New order from ${fullName} — ${orderId}`,
       react: OrderNotificationEmail({
         fullName,
         email,
@@ -183,41 +167,69 @@ export async function POST(request: Request) {
         total,
         orderId,
       }),
-    })
-    .catch((err) => {
-      console.error(
-        'Order saved, but admin notification email failed:',
-        err
-      );
     });
 
-  // -----------------------------
-  // CUSTOMER CONFIRMATION EMAIL
-  // -----------------------------
+    if (adminResult.error) {
+      console.error('Admin order email failed:', adminResult.error);
 
-  if (email.trim()) {
-    resend.emails
-      .send({
-        from: 'RYCE Orders <orders@rycenp.com>',
-        to: [email.trim()],
-        replyTo: NOTIFY_EMAIL,
-        subject: 'We’ve received your order',
-        react: CustomerOrderConfirmationEmail({
-          name: fullName,
-          orderId,
-          total,
-        }),
-      })
-      .catch((err) => {
-        console.error(
-          'Order saved, but customer auto-reply email failed:',
-          err
-        );
-      });
+      return NextResponse.json(
+        {
+          error: 'We could not send your order to RYCE. Please try again.',
+        },
+        { status: 500 }
+      );
+    }
+
+    console.log('Admin order email sent:', adminResult.data?.id);
+  } catch (error) {
+    console.error('Admin order email exception:', error);
+
+    return NextResponse.json(
+      {
+        error: 'We could not process your order. Please try again.',
+      },
+      { status: 500 }
+    );
   }
+
+
+
+  let customerEmailSent = false;
+
+  try {
+    const customerResult = await resend.emails.send({
+      from: 'RYCE Orders <orders@rycenp.com>',
+      to: [email.trim()],
+      replyTo: NOTIFY_EMAIL,
+      subject: 'We’ve received your order',
+      react: CustomerOrderConfirmationEmail({
+        name: fullName,
+        orderId,
+        total,
+      }),
+    });
+
+    if (customerResult.error) {
+      console.error(
+        'Customer confirmation email failed:',
+        customerResult.error
+      );
+    } else {
+      customerEmailSent = true;
+      console.log(
+        'Customer confirmation email sent:',
+        customerResult.data?.id
+      );
+    }
+  } catch (error) {
+    console.error('Customer confirmation email exception:', error);
+  }
+
+
 
   return NextResponse.json({
     success: true,
     orderId,
+    customerEmailSent,
   });
 }
