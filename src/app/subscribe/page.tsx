@@ -4,10 +4,29 @@ import { FormEvent, useState } from 'react';
 
 export default function SubscribePage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError('');
+
+    const email = new FormData(event.currentTarget).get('email');
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error();
+      setSubmitted(true);
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -28,23 +47,29 @@ export default function SubscribePage() {
             You&apos;re on the list. We&apos;ll be in touch.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-10 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-            <label htmlFor="subscribe-email" className="sr-only">Email address</label>
-            <input
-              id="subscribe-email"
-              name="email"
-              type="email"
-              required
-              placeholder="Your email address"
-              className="flex-1 min-h-12 border border-[var(--border-subtle,rgba(43,42,38,0.18))] bg-transparent px-4 font-[Montserrat,sans-serif] text-sm outline-none focus:border-[var(--text-primary)]"
-            />
-            <button
-              type="submit"
-              className="min-h-12 px-7 bg-[var(--text-primary)] text-[var(--bg-surface)] font-[Montserrat,sans-serif] text-xs tracking-[0.16em] uppercase transition-opacity hover:opacity-80"
-            >
-              Subscribe
-            </button>
-          </form>
+          <>
+            <form onSubmit={handleSubmit} className="mt-10 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+              <label htmlFor="subscribe-email" className="sr-only">Email address</label>
+              <input
+                id="subscribe-email"
+                name="email"
+                type="email"
+                required
+                placeholder="Your email address"
+                className="flex-1 min-h-12 border border-[var(--border-subtle,rgba(43,42,38,0.18))] bg-transparent px-4 font-[Montserrat,sans-serif] text-sm outline-none focus:border-[var(--text-primary)]"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="min-h-12 px-7 bg-[var(--text-primary)] text-[var(--bg-surface)] font-[Montserrat,sans-serif] text-xs tracking-[0.16em] uppercase transition-opacity hover:opacity-80 disabled:opacity-50"
+              >
+                {loading ? 'Subscribing...' : 'Subscribe'}
+              </button>
+            </form>
+            {error && (
+              <p className="mt-4 font-[Montserrat,sans-serif] text-sm text-red-600">{error}</p>
+            )}
+          </>
         )}
       </div>
     </main>
