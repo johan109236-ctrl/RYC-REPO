@@ -183,15 +183,39 @@ export default function OrderNotificationEmail({
         </tbody>
       </table>
 
-      <p
+      <div
         style={{
-          fontWeight: 'bold',
-          fontSize: 16,
           marginTop: 16,
+          paddingTop: 16,
+          borderTop: '1px solid #eee',
         }}
       >
-        Total: {total}
-      </p>
+        <p
+          style={{
+            fontWeight: 'bold',
+            fontSize: 16,
+            margin: 0,
+          }}
+        >
+          Order total: NRS {total}
+        </p>
+
+        {deliveryArea === 'outside-valley' ? (
+          <>
+            <p style={{ margin: '8px 0 0', color: '#666' }}>
+              Delivery charge: To be confirmed
+            </p>
+
+            <p style={{ margin: '8px 0 0', color: '#666' }}>
+              Final payable amount: To be confirmed
+            </p>
+          </>
+        ) : (
+          <p style={{ margin: '8px 0 0', color: '#666' }}>
+            Kathmandu Valley delivery is included in the order total.
+          </p>
+        )}
+      </div>
     </div>
   );
 }

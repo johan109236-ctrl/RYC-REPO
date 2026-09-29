@@ -203,10 +203,11 @@ export async function POST(request: Request) {
       replyTo: NOTIFY_EMAIL,
       subject: 'We’ve received your order',
       react: CustomerOrderConfirmationEmail({
-        name: fullName,
-        orderId,
-        total,
-      }),
+      name: fullName,
+      orderId,
+      total,
+      deliveryArea,
+    }),
     });
 
     if (customerResult.error) {
