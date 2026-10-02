@@ -33,10 +33,10 @@ export async function GET(request: Request) {
   }
 
   const stock = (variants ?? []).map((v: any) => ({
-    color: v.color ?? '',
-    size: v.size,
-    stock: v.stock,
-  }));
+  color: v.color ?? '',
+  size: v.size,
+  available: v.stock > 0,
+}));
 
-  return NextResponse.json({ stock });
+return NextResponse.json({ stock });
 }

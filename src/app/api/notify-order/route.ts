@@ -142,7 +142,7 @@ export async function POST(request: Request) {
 
   const { data: variants, error: variantsError } = await supabase
     .from('product_variants')
-    .select('id, color, size, products(name)');
+    .select('id, color, size, price, products(name)');
 
   if (variantsError || !variants) {
     console.error('Could not load variants:', variantsError);
@@ -154,12 +154,24 @@ export async function POST(request: Request) {
 
   const norm = (s?: string) => (s ?? '').trim().toLowerCase();
 
+  
+
   const dbItems: { variant_id: number; quantity: number }[] = [];
+  let calculatedTotal = 0;
 
   for (const item of items) {
+
+    if (!Number.isInteger(item.qty) || item.qty < 1 || item.qty > 3) {
+  return NextResponse.json(
+    { error: 'Invalid quantity.' },
+    { status: 400 }
+  );
+}
+
+
     const match = variants.find((v) => {
-      const product = Array.isArray(v.products) ? v.products[0] : v.products;
-      return (
+  const product = Array.isArray(v.products) ? v.products[0] : v.products;
+  return (
         norm(product?.name) === norm(item.name) &&
         norm(v.color) === norm(item.color) &&
         norm(v.size) === norm(item.size)
@@ -173,7 +185,24 @@ export async function POST(request: Request) {
       );
     }
 
-    dbItems.push({ variant_id: match.id, quantity: item.qty });
+    const product = Array.isArray(match.products)
+  ? match.products[0]
+  : match.products;
+
+const dbPrice = Number(match.price);
+
+if (!Number.isFinite(dbPrice)) {
+  return NextResponse.json(
+    { error: 'Invalid product price.' },
+    { status: 500 }
+  );
+}
+
+dbItems.push({
+  variant_id: match.id,
+  quantity: item.qty,
+});
+calculatedTotal += dbPrice * item.qty;
   }
 
   const { data: dbOrderId, error: orderError } = await supabase.rpc('place_order', {
@@ -197,7 +226,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: 'We could not process your order. Please try again.', detail: orderError.message },
+      { error: 'We could not process your order. Please try again.' },
       { status: 500 }
     );
   }
@@ -217,7 +246,7 @@ export async function POST(request: Request) {
         paymentMethod,
         notes,
         items,
-        total,
+        total: calculatedTotal,
         orderId,
       })
     );
@@ -245,7 +274,7 @@ export async function POST(request: Request) {
       CustomerOrderConfirmationEmail({
         name: fullName,
         orderId,
-        total,
+        total:calculatedTotal,
         deliveryArea,
       })
     );
