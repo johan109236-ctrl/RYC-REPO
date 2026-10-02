@@ -11,8 +11,8 @@ export type Product = {
   name: string;
   price: string;
   image: string;       
-  hoverImage: string;  // card hover image
-  href: string;        // constructed from slug — keep for ProductCard
+  hoverImage: string; 
+  href: string;        
   tag: string;
   sizes: string[];
   comingSoon?: boolean;

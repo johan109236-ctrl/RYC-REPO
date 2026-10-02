@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 
 export default function ProductPage({ data }: { data: any }) {
@@ -12,18 +12,94 @@ export default function ProductPage({ data }: { data: any }) {
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
   const [justAdded, setJustAdded]         = useState(false);
   const [qty, setQty]                     = useState(1);
+  const [stockMap, setStockMap]           = useState<Record<string, number> | null>(null);
 
   const MAX_QTY_PER_ORDER = 3;
 
   const hasColors = data.colors?.length > 0;
   const isComingSoon = Boolean(data.comingSoon);
 
+  const norm = (s?: string | null) => (s ?? '').trim().toLowerCase();
+
+  useEffect(() => {
+    if (isComingSoon) return;
+    let cancelled = false;
+
+    fetch(`/api/stock?product=${encodeURIComponent(data.name)}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (cancelled) return;
+        const map: Record<string, number> = {};
+        for (const v of json.stock ?? []) {
+          map[`${norm(v.color)}::${norm(v.size)}`] = v.stock;
+        }
+        setStockMap(map);
+      })
+      .catch((err) => console.error('Could not load stock:', err));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [data.name, isComingSoon]);
+
+  function getStock(color: string | null, size: string): number | null {
+    if (!stockMap) return null;
+    const key = `${norm(color)}::${norm(size)}`;
+    return key in stockMap ? stockMap[key] : null;
+  }
+
+  function isSizeSoldOut(size: string) {
+    if (!stockMap) return false;
+    if (hasColors) {
+      if (!selectedColor) return false;
+      const s = getStock(selectedColor, size);
+      return s !== null && s <= 0;
+    }
+    const s = getStock(null, size);
+    return s !== null && s <= 0;
+  }
+
+  function isColorSoldOut(colorLabel: string) {
+    if (!stockMap || !data.sizes) return false;
+    return data.sizes.every((size: string) => {
+      const s = getStock(colorLabel, size);
+      return s !== null && s <= 0;
+    });
+  }
+
+  // If the color changes and the previously picked size is sold out
+  // for the new color, clear the size so the state doesn't go stale.
+  useEffect(() => {
+    if (selectedSize && isSizeSoldOut(selectedSize)) {
+      setSelectedSize(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedColor, stockMap]);
+
   const activeImages =
     data.colors?.find((c: any) => c.label === selectedColor)?.images ??
     data.images ??
     [];
 
-  const canAddToCart = !isComingSoon && Boolean(selectedSize) && (!hasColors || Boolean(selectedColor));
+  const selectedSoldOut = Boolean(selectedSize && isSizeSoldOut(selectedSize));
+
+  // Cap quantity by remaining stock for the selected combo (if known)
+  const selectedStock =
+    selectedSize ? getStock(hasColors ? selectedColor : null, selectedSize) : null;
+  const maxQty =
+    selectedStock !== null && selectedStock > 0
+      ? Math.min(MAX_QTY_PER_ORDER, selectedStock)
+      : MAX_QTY_PER_ORDER;
+
+  useEffect(() => {
+    setQty((q) => Math.min(q, maxQty));
+  }, [maxQty]);
+
+  const canAddToCart =
+    !isComingSoon &&
+    Boolean(selectedSize) &&
+    (!hasColors || Boolean(selectedColor)) &&
+    !selectedSoldOut;
 
   const handleAddToCart = () => {
     if (!canAddToCart || !selectedSize) return;
@@ -118,6 +194,12 @@ export default function ProductPage({ data }: { data: any }) {
         .pp-slide-img.is-active {
           opacity: 1;
           pointer-events: auto;
+        }
+
+        .pp-slide-img.is-contain {
+          object-fit: contain;
+          object-position: center;
+          background: #fff;
         }
 
         /* ── ARROWS ───────────────────────────────────────── */
@@ -310,6 +392,43 @@ export default function ProductPage({ data }: { data: any }) {
           color: var(--bg-primary);
         }
 
+        /* ── SOLD OUT STATES ──────────────────────────────── */
+        .pp-size-btn.is-soldout,
+        .pp-color-btn.is-soldout {
+          opacity: 0.35;
+          cursor: not-allowed;
+          position: relative;
+        }
+
+        .pp-size-btn.is-soldout {
+          text-decoration: line-through;
+        }
+        .pp-size-btn.is-soldout:hover {
+          border-color: var(--border-subtle, rgba(43,42,38,0.2));
+        }
+
+        .pp-color-btn.is-soldout:hover {
+          transform: none;
+        }
+        .pp-color-btn.is-soldout::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: repeating-linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.6) 0px,
+            rgba(255, 255, 255, 0.6) 1px,
+            transparent 1px,
+            transparent 4px
+          );
+        }
+
+        .pp-size-soldout-label {
+          font-size: 0.65em;
+          opacity: 0.7;
+          white-space: pre;
+        }
+
         /* ── ADD TO CART ──────────────────────────────────── */
         .pp-add-btn {
           width: 100%;
@@ -371,13 +490,6 @@ export default function ProductPage({ data }: { data: any }) {
           opacity: 0.3;
           cursor: not-allowed;
         }
-        
-        .pp-slide-img.is-contain {
-            object-fit: contain;
-            object-position: center;
-            background: #fff;
-            }
-
         .pp-qty-stepper span {
           min-width: 32px;
           text-align: center;
@@ -394,6 +506,8 @@ export default function ProductPage({ data }: { data: any }) {
         .pp-color-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .pp-color-btn:disabled:hover { transform: none; }
         .pp-size-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .pp-color-btn.is-soldout:disabled,
+        .pp-size-btn.is-soldout:disabled { opacity: 0.35; }
 
         /* ── DESCRIPTION ──────────────────────────────────── */
         .pp-desc {
@@ -482,7 +596,8 @@ export default function ProductPage({ data }: { data: any }) {
           .pp-breadcrumb { margin-bottom: 1.25rem; }
           .pp-layout     { grid-template-columns: 1fr; gap: 1.75rem; }
           .pp-gallery    { position: static; }
-          .pp-info       { position: static; max-height: none; overflow: visible; }          .pp-name       { font-size: clamp(1.5rem, 6vw, 2rem); }
+          .pp-info       { position: static; max-height: none; overflow: visible; }
+          .pp-name       { font-size: clamp(1.5rem, 6vw, 2rem); }
           .pp-add-btn    { padding: 0.95rem 1.5rem; }
           .pp-arrow      { width: 34px; height: 34px; font-size: 0.85rem; }
         }
@@ -506,13 +621,13 @@ export default function ProductPage({ data }: { data: any }) {
 
               {activeImages.map((img: string, i: number) => (
                 <img
-                    key={i}
-                    src={img}
-                    alt={`${data.name} – view ${i + 1}`}
-                    className={`pp-slide-img ${i === currentImg ? 'is-active' : ''} ${
-                        img.includes('SIZE-CHART') ? 'is-contain' : ''
-                    }`}
-                    />
+                  key={i}
+                  src={img}
+                  alt={`${data.name} – view ${i + 1}`}
+                  className={`pp-slide-img ${i === currentImg ? 'is-active' : ''} ${
+                    img.includes('SIZE-CHART') ? 'is-contain' : ''
+                  }`}
+                />
               ))}
 
               {total > 1 && (
@@ -570,19 +685,23 @@ export default function ProductPage({ data }: { data: any }) {
                   Colour {selectedColor && <span>— {selectedColor}</span>}
                 </div>
                 <div className="pp-color-row">
-                  {data.colors.map((color: any) => (
-                    <button
-                      key={color.label}
-                      className={`pp-color-btn ${selectedColor === color.label ? 'is-selected' : ''}`}
-                      style={{ background: color.swatch }}
-                      title={color.label}
-                      onClick={() => {
-                        setSelectedColor(color.label);
-                        setCurrentImg(0);
-                      }}
-                      disabled={isComingSoon}
-                    />
-                  ))}
+                  {data.colors.map((color: any) => {
+                    const soldOut = isColorSoldOut(color.label);
+                    return (
+                      <button
+                        key={color.label}
+                        className={`pp-color-btn ${selectedColor === color.label ? 'is-selected' : ''} ${soldOut ? 'is-soldout' : ''}`}
+                        style={{ background: color.swatch }}
+                        title={soldOut ? `${color.label} — Sold out` : color.label}
+                        aria-label={soldOut ? `${color.label} — Sold out` : color.label}
+                        onClick={() => {
+                          setSelectedColor(color.label);
+                          setCurrentImg(0);
+                        }}
+                        disabled={isComingSoon || soldOut}
+                      />
+                    );
+                  })}
                 </div>
               </>
             )}
@@ -592,16 +711,20 @@ export default function ProductPage({ data }: { data: any }) {
               Size {selectedSize && <span>— {selectedSize}</span>}
             </div>
             <div className="pp-size-grid">
-              {data.sizes?.map((size: string) => (
-                <button
-                  key={size}
-                  className={`pp-size-btn ${selectedSize === size ? 'is-selected' : ''}`}
-                  onClick={() => setSelectedSize(size)}
-                  disabled={isComingSoon}
-                >
-                  {size}
-                </button>
-              ))}
+              {data.sizes?.map((size: string) => {
+                const soldOut = isSizeSoldOut(size);
+                return (
+                  <button
+                    key={size}
+                    className={`pp-size-btn ${selectedSize === size ? 'is-selected' : ''} ${soldOut ? 'is-soldout' : ''}`}
+                    onClick={() => setSelectedSize(size)}
+                    disabled={isComingSoon || soldOut}
+                  >
+                    {size}
+                    {soldOut && <span className="pp-size-soldout-label"> · Sold out</span>}
+                  </button>
+                );
+              })}
             </div>
 
             {/* QTY */}
@@ -612,10 +735,16 @@ export default function ProductPage({ data }: { data: any }) {
                   <div className="pp-qty-stepper">
                     <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="Decrease quantity">−</button>
                     <span>{qty}</span>
-                    <button type="button" onClick={() => setQty((q) => Math.min(MAX_QTY_PER_ORDER, q + 1))} disabled={qty >= MAX_QTY_PER_ORDER} aria-label="Increase quantity">+</button>
+                    <button type="button" onClick={() => setQty((q) => Math.min(maxQty, q + 1))} disabled={qty >= maxQty} aria-label="Increase quantity">+</button>
                   </div>
                 </div>
-                {qty >= MAX_QTY_PER_ORDER && <p className="pp-qty-max-note">Limit of {MAX_QTY_PER_ORDER} per order.</p>}
+                {qty >= maxQty && (
+                  <p className="pp-qty-max-note">
+                    {maxQty < MAX_QTY_PER_ORDER
+                      ? `Only ${maxQty} left in this size.`
+                      : `Limit of ${MAX_QTY_PER_ORDER} per order.`}
+                  </p>
+                )}
               </>
             )}
 
@@ -629,6 +758,8 @@ export default function ProductPage({ data }: { data: any }) {
                 ? 'Select a Size'
                 : hasColors && !selectedColor
                 ? 'Select a Colour'
+                : selectedSoldOut
+                ? 'Sold Out'
                 : `Add ${qty} to Cart`}
             </button>
 

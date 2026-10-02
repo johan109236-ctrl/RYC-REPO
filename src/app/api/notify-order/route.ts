@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import { render } from '@react-email/render';
 import { Resend } from 'resend';
+import { createClient } from '@supabase/supabase-js';
 import OrderNotificationEmail from '@/app/components/OrderNotificationEmail';
 import CustomerOrderConfirmationEmail from '@/app/components/Customerorderconfirmationemail';
 
@@ -43,8 +45,6 @@ type OrderPayload = {
 };
 
 export async function POST(request: Request) {
-
-
   const ip = getClientIp(request);
   const now = Date.now();
   const current = rateLimit.get(ip);
@@ -59,25 +59,18 @@ export async function POST(request: Request) {
 
     if (current.count > RATE_LIMIT) {
       return NextResponse.json(
-        {
-          error: 'Too many order attempts. Please try again later.',
-        },
+        { error: 'Too many order attempts. Please try again later.' },
         { status: 429 }
       );
     }
   }
-
-
 
   let body: OrderPayload;
 
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(
-      { error: 'Invalid JSON body' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
   const {
@@ -92,7 +85,6 @@ export async function POST(request: Request) {
     items,
     total,
   } = body;
-
 
   if (
     !fullName?.trim() ||
@@ -111,10 +103,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (
-    deliveryArea !== 'kathmandu-valley' &&
-    deliveryArea !== 'outside-valley'
-  ) {
+  if (deliveryArea !== 'kathmandu-valley' && deliveryArea !== 'outside-valley') {
     return NextResponse.json(
       { error: 'Invalid delivery location' },
       { status: 400 }
@@ -128,33 +117,97 @@ export async function POST(request: Request) {
     );
   }
 
-
-
-  const orderId = `RYCE-${Date.now()}`;
-
-
-
   const apiKey = process.env.RESEND_API_KEY;
 
   if (!apiKey) {
     console.error('RESEND_API_KEY is missing');
-
     return NextResponse.json(
       { error: 'Order email service is not configured.' },
       { status: 500 }
     );
   }
 
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('Supabase env variables are missing');
+    return NextResponse.json(
+      { error: 'Order service is not configured.' },
+      { status: 500 }
+    );
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  const { data: variants, error: variantsError } = await supabase
+    .from('product_variants')
+    .select('id, color, size, products(name)');
+
+  if (variantsError || !variants) {
+    console.error('Could not load variants:', variantsError);
+    return NextResponse.json(
+      { error: 'We could not process your order. Please try again.' },
+      { status: 500 }
+    );
+  }
+
+  const norm = (s?: string) => (s ?? '').trim().toLowerCase();
+
+  const dbItems: { variant_id: number; quantity: number }[] = [];
+
+  for (const item of items) {
+    const match = variants.find((v) => {
+      const product = Array.isArray(v.products) ? v.products[0] : v.products;
+      return (
+        norm(product?.name) === norm(item.name) &&
+        norm(v.color) === norm(item.color) &&
+        norm(v.size) === norm(item.size)
+      );
+    });
+
+    if (!match) {
+      return NextResponse.json(
+        { error: `${item.name} (${item.color} / ${item.size}) is not available.` },
+        { status: 400 }
+      );
+    }
+
+    dbItems.push({ variant_id: match.id, quantity: item.qty });
+  }
+
+  const { data: dbOrderId, error: orderError } = await supabase.rpc('place_order', {
+    p_name: fullName.trim(),
+    p_phone: phone.trim(),
+    p_email: email.trim(),
+    p_address: address.trim(),
+    p_location_type: deliveryArea === 'kathmandu-valley' ? 'inside_valley' : 'outside_valley',
+    p_city_district: deliveryArea === 'kathmandu-valley' ? null : city.trim(),
+    p_items: dbItems,
+  });
+
+  if (orderError) {
+    console.error('place_order failed:', orderError);
+
+    if (orderError.message.includes('Out of stock')) {
+      return NextResponse.json(
+        { error: 'Sorry, one of the items you picked just sold out.' },
+        { status: 409 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: 'We could not process your order. Please try again.', detail: orderError.message },
+      { status: 500 }
+    );
+  }
+
+  const orderId = `RYCE-${dbOrderId}`;
   const resend = new Resend(apiKey);
 
-
-
   try {
-    const adminResult = await resend.emails.send({
-      from: 'orders@rycenp.com',
-      to: [NOTIFY_EMAIL],
-      subject: `New order from ${fullName} — ${orderId}`,
-      react: OrderNotificationEmail({
+    const adminHtml = await render(
+      OrderNotificationEmail({
         fullName,
         email,
         phone,
@@ -166,67 +219,54 @@ export async function POST(request: Request) {
         items,
         total,
         orderId,
-      }),
+      })
+    );
+
+    const adminResult = await resend.emails.send({
+      from: 'orders@rycenp.com',
+      to: [NOTIFY_EMAIL],
+      subject: `New order from ${fullName} — ${orderId}`,
+      html: adminHtml,
     });
 
     if (adminResult.error) {
       console.error('Admin order email failed:', adminResult.error);
-
-      return NextResponse.json(
-        {
-          error: 'We could not send your order to RYCE. Please try again.',
-        },
-        { status: 500 }
-      );
+    } else {
+      console.log('Admin order email sent:', adminResult.data?.id);
     }
-
-    console.log('Admin order email sent:', adminResult.data?.id);
   } catch (error) {
     console.error('Admin order email exception:', error);
-
-    return NextResponse.json(
-      {
-        error: 'We could not process your order. Please try again.',
-      },
-      { status: 500 }
-    );
   }
-
-
 
   let customerEmailSent = false;
 
   try {
+    const customerHtml = await render(
+      CustomerOrderConfirmationEmail({
+        name: fullName,
+        orderId,
+        total,
+        deliveryArea,
+      })
+    );
+
     const customerResult = await resend.emails.send({
       from: 'RYCE Orders <orders@rycenp.com>',
       to: [email.trim()],
       replyTo: NOTIFY_EMAIL,
       subject: 'We’ve received your order',
-      react: CustomerOrderConfirmationEmail({
-      name: fullName,
-      orderId,
-      total,
-      deliveryArea,
-    }),
+      html: customerHtml,
     });
 
     if (customerResult.error) {
-      console.error(
-        'Customer confirmation email failed:',
-        customerResult.error
-      );
+      console.error('Customer confirmation email failed:', customerResult.error);
     } else {
       customerEmailSent = true;
-      console.log(
-        'Customer confirmation email sent:',
-        customerResult.data?.id
-      );
+      console.log('Customer confirmation email sent:', customerResult.data?.id);
     }
   } catch (error) {
     console.error('Customer confirmation email exception:', error);
   }
-
-
 
   return NextResponse.json({
     success: true,
