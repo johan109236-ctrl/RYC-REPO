@@ -5,6 +5,7 @@ import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
 import OrderNotificationEmail from '@/app/components/OrderNotificationEmail';
 import CustomerOrderConfirmationEmail from '@/app/components/Customerorderconfirmationemail';
+import { quoteDelivery, deliveryLabel } from '@/app/shop/delivery-data';
 
 const NOTIFY_EMAIL = 'rycenepal@gmail.com';
 
@@ -15,13 +16,6 @@ const RATE_WINDOW = 60 * 60 * 1000;
 
 const MAX_QTY_PER_VARIANT = 3;
 const MAX_LINE_ITEMS = 10;
-
-// If your checkout page adds a delivery charge to the total, put it here so the
-// emails still show the right amount. 0 = items only (matches the code you deployed).
-const DELIVERY_FEE: Record<'kathmandu-valley' | 'outside-valley', number> = {
-  'kathmandu-valley': 0,
-  'outside-valley': 0,
-};
 
 function getClientIp(request: Request) {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -47,7 +41,10 @@ type OrderPayload = {
   address: string;
   city: string;
   deliveryArea: 'kathmandu-valley' | 'outside-valley';
-  paymentMethod: 'cod';
+  deliveryPlace?: { district: string; place: string; spot?: string } | null;
+  paymentMethod: 'cod' | 'delivery_only' | 'partial' | 'full';
+  amountPaid?: number;
+  paymentProof?: { filename: string; type: string; content: string } | null;
   notes?: string;
   items: OrderItem[];
   total?: number; // ignored: the server calculates the total
@@ -86,7 +83,10 @@ export async function POST(request: Request) {
     address,
     city,
     deliveryArea,
+    deliveryPlace,
     paymentMethod,
+    amountPaid,
+    paymentProof,
     notes,
     items,
   } = body ?? ({} as OrderPayload);
@@ -111,11 +111,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid delivery location' }, { status: 400 });
   }
 
+  // The delivery charge is worked out here on the server (never trusted from the browser).
+  const quote = quoteDelivery(deliveryArea, deliveryPlace?.district, deliveryPlace?.place, deliveryPlace?.spot);
+  if (quote.error) {
+    return NextResponse.json({ error: 'Invalid delivery location' }, { status: 400 });
+  }
+
+  if (!['cod', 'delivery_only', 'partial', 'full'].includes(paymentMethod)) {
+    return NextResponse.json({ error: 'Please choose a payment option' }, { status: 400 });
+  }
+
+  // Payment screenshot: only attached to the order email, never stored anywhere.
+  let proofBuffer: Buffer | null = null;
   if (paymentMethod !== 'cod') {
-    return NextResponse.json(
-      { error: 'Only Cash on Delivery is currently available' },
-      { status: 400 }
-    );
+    const okProof =
+      paymentProof &&
+      typeof paymentProof.content === 'string' &&
+      paymentProof.content.length > 100 &&
+      paymentProof.content.length < 2_500_000;
+    if (okProof) proofBuffer = Buffer.from(paymentProof!.content, 'base64');
+    // a real JPEG starts with the bytes FF D8
+    if (!proofBuffer || proofBuffer[0] !== 0xff || proofBuffer[1] !== 0xd8) {
+      return NextResponse.json({ error: 'Please upload your payment screenshot.' }, { status: 400 });
+    }
   }
 
   // Basic sanity limits so nobody can stuff huge text into your emails/database
@@ -201,7 +219,7 @@ export async function POST(request: Request) {
     }
 
     const dbPrice = Number(match.price);
-    if (!Number.isFinite(dbPrice) || dbPrice < 0) {
+    if (!Number.isFinite(dbPrice) || dbPrice <= 0) {
       console.error('Invalid price for variant', match.id);
       return NextResponse.json(
         { error: 'We could not process your order. Please try again.' },
@@ -221,7 +239,10 @@ export async function POST(request: Request) {
     emailItems.push({ ...item, price: dbPrice });
   }
 
-  calculatedTotal += DELIVERY_FEE[deliveryArea];
+  // null = outside the valley and not in the rate list: confirmed separately
+  const deliveryCharge = quote.charge;
+  const orderTotal = calculatedTotal + (deliveryCharge ?? 0);
+  const deliveryPlaceText = deliveryLabel(deliveryArea, quote);
 
   const dbItems = Array.from(qtyByVariant, ([variant_id, quantity]) => ({
     variant_id,
@@ -254,6 +275,41 @@ export async function POST(request: Request) {
     );
   }
 
+  // payment option the customer chose (we still confirm the payment ourselves)
+  if (paymentMethod === 'partial' && !(typeof amountPaid === 'number' && amountPaid > 0 && amountPaid < orderTotal)) {
+    return NextResponse.json({ error: 'Enter the amount you paid (less than the total)' }, { status: 400 });
+  }
+  const paymentLabels = {
+    cod: 'Cash on delivery',
+    delivery_only: 'Customer says: delivery charge paid online, rest on delivery',
+    partial: `Customer says: NRS ${amountPaid} paid online, rest on delivery`,
+    full: 'Customer says: paid in full online',
+  } as const;
+  const paymentLine = `PAYMENT: ${paymentLabels[paymentMethod]}.`;
+  const notesWithPayment = [paymentLine, notes].filter(Boolean).join('\n');
+
+  // Save the delivery charge on the order so the admin can show what to collect.
+  // If the delivery columns don't exist yet the order is still kept and emailed.
+  const { error: deliverySaveError } = await supabase
+    .from('orders')
+    .update({ delivery_charge: deliveryCharge, delivery_place: deliveryPlaceText })
+    .eq('id', dbOrderId);
+  if (deliverySaveError) {
+    console.error('Could not save delivery charge on order:', deliverySaveError);
+  }
+
+  const { error: paymentSaveError } = await supabase
+    .from('orders')
+    .update({
+      payment_status:
+        paymentMethod === 'full' ? 'paid_full' : paymentMethod === 'delivery_only' ? 'delivery_paid' : paymentMethod === 'partial' ? 'partial' : 'unpaid',
+      amount_paid: paymentMethod === 'partial' ? amountPaid : null,
+    })
+    .eq('id', dbOrderId);
+  if (paymentSaveError) {
+    console.error('Could not save payment info on order:', paymentSaveError);
+  }
+
   const orderId = `RYCE-${dbOrderId}`;
   const resend = new Resend(apiKey);
 
@@ -266,10 +322,12 @@ export async function POST(request: Request) {
         address,
         city,
         deliveryArea,
-        paymentMethod,
-        notes,
+        paymentMethod: 'cod' as const,
+        notes: notesWithPayment,
         items: emailItems,
-        total: calculatedTotal,
+        total: orderTotal,
+        deliveryCharge,
+        deliveryPlace: deliveryPlaceText,
         orderId,
       })
     );
@@ -279,6 +337,9 @@ export async function POST(request: Request) {
       to: [NOTIFY_EMAIL],
       subject: `New order from ${fullName} — ${orderId}`,
       html: adminHtml,
+      ...(proofBuffer
+        ? { attachments: [{ filename: `${orderId}-payment-proof.jpg`, content: proofBuffer }] }
+        : {}),
     });
 
     if (adminResult.error) {
@@ -297,8 +358,10 @@ export async function POST(request: Request) {
       CustomerOrderConfirmationEmail({
         name: fullName,
         orderId,
-        total: calculatedTotal,
+        total: orderTotal,
         deliveryArea,
+        deliveryCharge,
+        deliveryPlace: deliveryPlaceText,
       })
     );
 

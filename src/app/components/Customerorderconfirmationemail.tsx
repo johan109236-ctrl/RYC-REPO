@@ -1,9 +1,10 @@
-
 type Props = {
   name: string;
   orderId: string;
   total: number;
   deliveryArea: 'kathmandu-valley' | 'outside-valley';
+  deliveryCharge?: number | null; // extra delivery charge in NRS, null = to be confirmed
+  deliveryPlace?: string;
 };
 
 export default function CustomerOrderConfirmationEmail({
@@ -11,8 +12,13 @@ export default function CustomerOrderConfirmationEmail({
   orderId,
   total,
   deliveryArea,
+  deliveryCharge,
+  deliveryPlace,
 }: Props) {
-  const isOutsideValley = deliveryArea === 'outside-valley';
+  // when no charge info is passed, behave exactly as before
+  const isOutsideValley =
+    deliveryCharge === undefined ? deliveryArea === 'outside-valley' : deliveryCharge === null;
+  const hasExtraCharge = typeof deliveryCharge === 'number' && deliveryCharge > 0;
 
   return (
     <div
@@ -64,9 +70,14 @@ export default function CustomerOrderConfirmationEmail({
               Final payable amount: To be confirmed
             </p>
           </>
+        ) : hasExtraCharge ? (
+          <p style={{ margin: '8px 0 0', color: '#666' }}>
+            This includes NRS {deliveryCharge} delivery charge
+            {deliveryPlace ? ` to ${deliveryPlace}` : ''}.
+          </p>
         ) : (
           <p style={{ margin: '8px 0 0', color: '#666' }}>
-            Delivery within Kathmandu Valley is included in the price above.
+            Delivery is included in the price above.
           </p>
         )}
       </div>
@@ -84,4 +95,3 @@ export default function CustomerOrderConfirmationEmail({
     </div>
   );
 }
-

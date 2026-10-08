@@ -18,6 +18,8 @@ type Props = {
   notes?: string;
   items: OrderItem[];
   total: number;
+  deliveryCharge?: number | null; // extra delivery charge in NRS, null = to be confirmed
+  deliveryPlace?: string;
 };
 
 export default function OrderNotificationEmail({
@@ -32,7 +34,14 @@ export default function OrderNotificationEmail({
   notes,
   items,
   total,
+  deliveryCharge,
+  deliveryPlace,
 }: Props) {
+  // when no charge info is passed, behave exactly as before
+  const confirmLater =
+    deliveryCharge === undefined ? deliveryArea === 'outside-valley' : deliveryCharge === null;
+  const hasExtraCharge = typeof deliveryCharge === 'number' && deliveryCharge > 0;
+
   return (
     <div
       style={{
@@ -200,7 +209,7 @@ export default function OrderNotificationEmail({
           Order total: NRS {total}
         </p>
 
-        {deliveryArea === 'outside-valley' ? (
+        {confirmLater ? (
           <>
             <p style={{ margin: '8px 0 0', color: '#666' }}>
               Delivery charge: To be confirmed
@@ -210,9 +219,14 @@ export default function OrderNotificationEmail({
               Final payable amount: To be confirmed
             </p>
           </>
+        ) : hasExtraCharge ? (
+          <p style={{ margin: '8px 0 0', color: '#666' }}>
+            Includes NRS {deliveryCharge} extra delivery charge
+            {deliveryPlace ? ` (${deliveryPlace})` : ''}.
+          </p>
         ) : (
           <p style={{ margin: '8px 0 0', color: '#666' }}>
-            Kathmandu Valley delivery is included in the order total.
+            Delivery is included in the order total.
           </p>
         )}
       </div>

@@ -1,4 +1,3 @@
-// src/app/api/stock/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -35,10 +34,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Could not load stock' }, { status: 500 });
   }
 
-  // Same response shape as before (color, size, stock) so ProductPage.tsx
-  // keeps working untouched. The number is capped at the per-order limit,
-  // so real inventory (e.g. 17) is never revealed: 0 = sold out,
-  // 1-2 = "Only N left", 3 = "Limit of 3 per order".
+
   const stock = (variants ?? []).map((v: any) => ({
     color: v.color ?? '',
     size: v.size,
