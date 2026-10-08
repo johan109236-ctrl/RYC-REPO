@@ -112,7 +112,7 @@ export default function PaymentSection({
         </p>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="assets/images/payment-qr.png"
+          src="/assets/images/payment-qr.png"
           alt="Payment QR code"
           width={220}
           height={220}
