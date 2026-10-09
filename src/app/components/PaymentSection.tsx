@@ -51,6 +51,7 @@ export default function PaymentSection({
   total,
   deliveryCharge,
   allowCod,
+  showQr = true,
   proof,
   onProof,
 }: {
@@ -61,6 +62,7 @@ export default function PaymentSection({
   total: number; // grand total in NRS
   deliveryCharge: number; // extra delivery charge in NRS (0 if none)
   allowCod: boolean;
+  showQr?: boolean; // true on /checkout, false on /order
   proof: PaymentProof | null;
   onProof: (p: PaymentProof | null) => void;
 }) {
@@ -104,22 +106,23 @@ export default function PaymentSection({
         </label>
       )}
 
-      {/* QR is always visible so the customer can pay first. Put your QR image in public/ */}
-      <div style={{ marginTop: 12 }}>
-        <p className="checkout-payment-note" style={{ marginBottom: 8 }}>
-          Scan this QR to pay{paid && toPay > 0 ? ` NRS ${toPay.toLocaleString()}` : ''}, then choose what you paid and
-          upload the payment screenshot.
-        </p>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/assets/images/payment-qr.png"
-          alt="Payment QR code"
-          width={220}
-          height={220}
-          style={{ display: 'block', marginBottom: 12, border: '1px solid #e7ded0', borderRadius: 8 }}
-          onError={(e) => (e.currentTarget.style.display = 'none')}
-        />
-      </div>
+      {showQr && (
+        <div style={{ marginTop: 12 }}>
+          <p className="checkout-payment-note" style={{ marginBottom: 8 }}>
+            Scan this QR to pay{paid && toPay > 0 ? ` NRS ${toPay.toLocaleString()}` : ''}, then choose what you paid
+            and upload the payment screenshot.
+          </p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/images/payment-qr.png"
+            alt="Payment QR code"
+            width={220}
+            height={220}
+            style={{ display: 'block', marginBottom: 12, border: '1px solid #e7ded0', borderRadius: 8 }}
+            onError={(e) => (e.currentTarget.style.display = 'none')}
+          />
+        </div>
+      )}
 
       {paid && (
         <div style={{ marginTop: 4 }}>

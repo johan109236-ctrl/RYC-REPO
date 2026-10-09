@@ -330,6 +330,7 @@ export default function QuickOrderPage() {
             total={grandTotal}
             deliveryCharge={quote.charge ?? 0}
             allowCod={true}
+            showQr={false}
             proof={proof}
             onProof={setProof}
           />
@@ -338,8 +339,6 @@ export default function QuickOrderPage() {
             Order Notes (optional)
             <textarea rows={3} value={form.notes} onChange={update('notes')} />
           </label>
-
-          {/* Payment QR: put your QR image at public/payment-qr.png */}
 
           {error && <p className="checkout-error">{error}</p>}
 
