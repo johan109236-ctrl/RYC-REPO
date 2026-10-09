@@ -63,7 +63,7 @@ export default function DeliveryPicker({
       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', margin: '8px 0' }}>
         <label style={{ display: 'flex', gap: 8, alignItems: 'center', opacity: 0.8 }}>
           <input type="radio" disabled readOnly checked={area === 'kathmandu-valley'} />
-          Kathmandu Valley (NRS {INCLUDED_DELIVERY} included)
+          Kathmandu Valley
         </label>
         <label style={{ display: 'flex', gap: 8, alignItems: 'center', opacity: 0.8 }}>
           <input type="radio" disabled readOnly checked={area === 'outside-valley'} />
