@@ -32,7 +32,6 @@ export const products: Product[] = [
 
 
   {
-    // card
     id:         'CROSS-PLEATED-PANTS',
     name:       'Cross Pleated Pants',
     price:      'NRS 1590',
@@ -42,7 +41,6 @@ export const products: Product[] = [
     tag:        'Available Now',
     sizes:      ['S', 'M', 'L'],
 
-    // detail page
     slug:     'pleated-pants',
     category: 'Pants',
     images: [

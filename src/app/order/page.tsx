@@ -331,6 +331,7 @@ export default function QuickOrderPage() {
             deliveryCharge={quote.charge ?? 0}
             allowCod={true}
             showQr={false}
+            allowDeliveryOnly={false}
             proof={proof}
             onProof={setProof}
           />

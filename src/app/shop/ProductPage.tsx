@@ -67,13 +67,11 @@ export default function ProductPage({ data }: { data: any }) {
     });
   }
 
-  // If the color changes and the previously picked size is sold out
-  // for the new color, clear the size so the state doesn't go stale.
+
   useEffect(() => {
     if (selectedSize && isSizeSoldOut(selectedSize)) {
       setSelectedSize(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedColor, stockMap]);
 
   const activeImages =
@@ -606,7 +604,6 @@ export default function ProductPage({ data }: { data: any }) {
 
       <div id="product-page">
 
-        {/* BREADCRUMB */}
         <div className="pp-breadcrumb">
           <a href="/shop">Shop</a>
           <span className="pp-breadcrumb-sep">/</span>
@@ -615,7 +612,6 @@ export default function ProductPage({ data }: { data: any }) {
 
         <div className="pp-layout">
 
-          {/* LEFT: SLIDESHOW */}
           <div className="pp-gallery">
             <div className="pp-slide">
 
@@ -664,7 +660,6 @@ export default function ProductPage({ data }: { data: any }) {
             )}
           </div>
 
-          {/* RIGHT: PRODUCT INFO */}
           <div className="pp-info">
 
             <span className="pp-tag">{data.category}</span>
@@ -678,7 +673,6 @@ export default function ProductPage({ data }: { data: any }) {
 
             <hr className="pp-divider" />
 
-            {/* COLOUR */}
             {data.colors?.length > 0 && (
               <>
                 <div className="pp-section-label">
@@ -706,7 +700,6 @@ export default function ProductPage({ data }: { data: any }) {
               </>
             )}
 
-            {/* SIZE */}
             <div className="pp-section-label">
               Size {selectedSize && <span>— {selectedSize}</span>}
             </div>
@@ -727,7 +720,6 @@ export default function ProductPage({ data }: { data: any }) {
               })}
             </div>
 
-            {/* QTY */}
             {!isComingSoon && (
               <>
                 <div className="pp-qty-row">
@@ -748,7 +740,6 @@ export default function ProductPage({ data }: { data: any }) {
               </>
             )}
 
-            {/* ADD TO CART */}
             <button className="pp-add-btn" disabled={!canAddToCart} onClick={handleAddToCart}>
               {isComingSoon
                 ? 'Coming Soon'
@@ -763,12 +754,10 @@ export default function ProductPage({ data }: { data: any }) {
                 : `Add ${qty} to Cart`}
             </button>
 
-            {/* DESCRIPTION */}
             <div className="pp-desc">
               <p>{data.description}</p>
             </div>
 
-            {/* ACCORDIONS */}
             <div className="pp-accordion">
 
               <div className={`pp-accordion-item ${openAccordion === 'details' ? 'is-open' : ''}`}>
@@ -795,7 +784,6 @@ export default function ProductPage({ data }: { data: any }) {
                 </div>
               </div>
 
-              {/* SIZE CHART */}
               {data.sizeChart && (
                 <div className={`pp-accordion-item ${openAccordion === 'sizechart' ? 'is-open' : ''}`}>
                   <button

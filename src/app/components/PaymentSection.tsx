@@ -52,6 +52,7 @@ export default function PaymentSection({
   deliveryCharge,
   allowCod,
   showQr = true,
+  allowDeliveryOnly = true,
   proof,
   onProof,
 }: {
@@ -63,6 +64,7 @@ export default function PaymentSection({
   deliveryCharge: number; // extra delivery charge in NRS (0 if none)
   allowCod: boolean;
   showQr?: boolean; // true on /checkout, false on /order
+  allowDeliveryOnly?: boolean;
   proof: PaymentProof | null;
   onProof: (p: PaymentProof | null) => void;
 }) {
@@ -76,7 +78,7 @@ export default function PaymentSection({
     <div className="checkout-field">
       <span>Payment *</span>
 
-      {OPTIONS.filter(([v]) => allowCod || v !== 'cod').map(([value, label]) => (
+      {OPTIONS.filter(([v]) => (allowCod || v !== 'cod') && (allowDeliveryOnly || v !== 'delivery_only')).map(([value, label]) => (
         <label key={value} className="checkout-payment-option">
           <input
             type="radio"
