@@ -70,7 +70,7 @@ export const products: Product[] = [
     description: 'Relaxed pleated pants designed for everyday wear. A wide silhouette with a clean drape.',
     details:     '65% Polyester | 35% Viscose.',
     care:        'Iron after washing to maintain the pleats. Do not bleach.',
-    sizeChart: '/assets/images/SIZE-CHART.png',
+    sizeChart: '/assets/images/SIZECHART.jpeg',
   },
 
   {
